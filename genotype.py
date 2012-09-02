@@ -8,7 +8,7 @@ __author__ = 'Ricardo Azevedo'
 
 import numpy as np
 import numpy.random as rnd
-
+import networkx as nx
 
 class Genotype(object):
     """
@@ -17,9 +17,9 @@ class Genotype(object):
     **Attributes:**
 
     * **adjacency_matrix** -- adjacency matrix representation of the gene network
-    * **reg_matrix** -- matrix representation of the gene network such that columns represent regulators and rows represent their targets
-    * **n_genes** -- number of genes
     * **connectivity** -- connectivity density
+    * **n_genes** -- number of genes
+    * **reg_matrix** -- matrix representation of the gene network such that columns represent regulators and rows represent their targets
 
     """
 
@@ -45,10 +45,19 @@ class Genotype(object):
         assert type(matrix) is np.ndarray
         assert matrix.shape[0] == matrix.shape[1]
         self.reg_matrix = matrix
-        self.n_genes = len(self.reg_matrix.diagonal())
+
+    @property
+    def n_genes(self):
+        return len(self.reg_matrix.diagonal())
+
+    @property
+    def adjacency_matrix(self):
+        return (self.reg_matrix != 0) * 1.
+
+    @property
+    def connectivity(self):
         # multiplying by 1. changes the dtype from bool to float
-        self.adjacency_matrix = (self.reg_matrix != 0) * 1.
-        self.connectivity = self.adjacency_matrix.sum() / (self.n_genes * self.n_genes)
+        return self.adjacency_matrix.sum() / (self.n_genes * self.n_genes)
 
     @staticmethod
     def generate_random(n_genes, connectivity):
@@ -74,6 +83,9 @@ class Genotype(object):
         flat_matrix[0:(n_nonzero_sites)] = rnd.normal(size = n_nonzero_sites)
         rnd.shuffle(flat_matrix)
         return Genotype(np.reshape(flat_matrix, (n_genes, n_genes)))
+
+
+
 
 
 
