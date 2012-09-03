@@ -11,7 +11,7 @@ Genotype
 ========
 
 .. autoclass:: Genotype
-    :members: __init__, generate_random
+    :members: __init__, n_genes, adj_matrix, connectivity, n_interactions, mean_abs_strength, graph, draw_graph, connected, generate_random
 
 Indices and tables
 ==================
