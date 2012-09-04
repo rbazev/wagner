@@ -1,1 +1,22 @@
 This file was created by PyCharm 2.5.2 for binding GitHub repository
+
+CONTENTS
+1. Getting Started with Python
+2. Introduction to the Code
+
+
+
+1. Getting Started
+    A. Windows
+        * IPython:
+            * Install Enthought for academics: http://www.enthought.com/products/edudownload.php
+            * Note: If you already have Python installed, you will need to uninstall it first (using the control panel),
+              and delete the Python folders from your C drive.
+            * Then, use the windows command line to navigate to the folder where you want to store the notebook data
+              and type: ipython notebook --pylab inline
+    B. Mac
+    C. Unix/Linux
+
+
+
+2. Introduction to the Code
