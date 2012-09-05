@@ -16,6 +16,8 @@ CONTENTS
               and type: ipython notebook --pylab inline
     B. Mac
     C. Unix/Linux
+        *IPython included in package manager is too old to support notebook.
+        Add "http://packages.debian.org/testing/python/" to sources list and install IPython 0.13+ and notebook from there
 
 
 
