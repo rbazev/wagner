@@ -1,0 +1,23 @@
+This file was created by PyCharm 2.5.2 for binding GitHub repository
+Last updated by KP on 9.18.12
+
+Contents:
+1. Tips and tricks for using PyCharm
+2. Tips and tricks for using iPython
+3. General Python tips
+
+-----------
+
+1. PyCharm
+
+Accessing/committing project code
+    -To check out the code from github, go to the VCS menu and click on "Checkout from version control"
+    -To update a currently cloned project, go to the VCS menu and click on "Update project"
+        *This currently creates merging errors which Ricardo is looking into (9.18.12)
+
+Using PyCharm features
+    -To examine the structure of the code, click on 7:Structure in the bottom left hand margin
+    -To comment out a section of code, highlight lines and push Ctrl+backslash
+
+
+2. iPython notebook
