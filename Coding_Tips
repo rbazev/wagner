@@ -11,13 +11,29 @@ Contents:
 1. PyCharm
 
 Accessing/committing project code
-    -To check out the code from github, go to the VCS menu and click on "Checkout from version control"
-    -To update a currently cloned project, go to the VCS menu and click on "Update project"
+    -To CHECK OUT the code from github, go to the VCS menu and click on "Checkout from version control"
+    -To UPDATE a currently cloned project, go to the VCS menu and click on "Update project"
         *This currently creates merging errors which Ricardo is looking into (9.18.12)
+    -To COMMIT a new file, right click the file in the Project side menu (or choose the VCS menu from the top menu),
+     then choose Git --> Add
+     Then go to Git --> Commit file --> Commit and Push (after adding a commit message)
+    -To COMMIT changes to an existing file, click Git (from VCS top menu or by right-clicking the file in the Project side menu),
+     then click Commit file --> Commit and Push (after adding a commit message)
 
 Using PyCharm features
+    -The documentation for an object/attribute/method is included in the code inside a block """ comment directly under the definition-
+     this is what shows up in the x? documentation in iPython (see below). Line # comment can be used anywhere
     -To examine the structure of the code, click on 7:Structure in the bottom left hand margin
     -To comment out a section of code, highlight lines and push Ctrl+backslash
 
 
 2. iPython notebook
+
+To run iPython (Windows), navigate to correct folder (with desired code) and type: ipython notebook --pylab inline
+
+Using iPython features
+    -Use 'tab' to autofill class/object/method names
+    -Use x? to view the documentation of an object x
+    -Use x?? to view the documentation and source code of an object x
+
+    -To extract code from a notebook session, choose .py from the dropdown menu next to Download and then click Download
