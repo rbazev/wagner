@@ -7,7 +7,7 @@ __author__ = 'Ricardo Azevedo'
 
 import numpy as np
 import numpy.random as rnd
-import pygraphviz as pgv
+#import pygraphviz as pgv
 import networkx as nx
 
 class Genotype(object):
@@ -73,45 +73,45 @@ class Genotype(object):
         """Mean absolute strength of interactions (excluding zeros)."""
         return np.abs(self.gene_network).sum() / self.n_interactions
 
-    @property
-    def graph(self):
-        """PyGraphviz representation of the gene network"""
-        g = pgv.AGraph(directed = True, strict = False)
-        g.node_attr['fontname'] = 'helvetica'
-        g.node_attr['fontsize'] = 16
-        g.node_attr['shape'] = 'circle'
-        g.node_attr['color'] = 'gray'
-        g.node_attr['style'] = 'filled'
-        # add genes
-        for gene in range(self.n_genes):
-            g.add_node(gene)
-        # add interactions
-        for regulator in range(self.n_genes):
-            for target in range(self.n_genes):
-                weight = self.gene_network[target, regulator]
-                if weight:
-                    g.add_edge(str(regulator), str(target))
-                    e = g.get_edge(str(regulator), str(target))
-                    e.attr['penwidth'] = np.abs(weight) / self.mean_abs_strength
-                    e.attr['color'] = 'red'
-                    if weight < 0:
-                        e.attr['color'] = 'blue'
-                        e.attr['arrowhead'] = 'tee'
-        g.layout(prog = 'dot')
-        return g
-
-    def draw_graph(self, filename):
-        """Draw gene network using graphviz.  Output PNG file."""
-        self.graph.draw(filename)
-
-    def connected(self):
-        """
-        Test whether gene network is connected.
-
-        """
-        ug = nx.Graph(data = self.graph)
-        cc = nx.connected_components(ug)
-        return len(cc) == 1
+#    @property
+#    def graph(self):
+#        """PyGraphviz representation of the gene network"""
+#        g = pgv.AGraph(directed = True, strict = False)
+#        g.node_attr['fontname'] = 'helvetica'
+#        g.node_attr['fontsize'] = 16
+#        g.node_attr['shape'] = 'circle'
+#        g.node_attr['color'] = 'gray'
+#        g.node_attr['style'] = 'filled'
+#        # add genes
+#        for gene in range(self.n_genes):
+#            g.add_node(gene)
+#        # add interactions
+#        for regulator in range(self.n_genes):
+#            for target in range(self.n_genes):
+#                weight = self.gene_network[target, regulator]
+#                if weight:
+#                    g.add_edge(str(regulator), str(target))
+#                    e = g.get_edge(str(regulator), str(target))
+#                    e.attr['penwidth'] = np.abs(weight) / self.mean_abs_strength
+#                    e.attr['color'] = 'red'
+#                    if weight < 0:
+#                        e.attr['color'] = 'blue'
+#                        e.attr['arrowhead'] = 'tee'
+#        g.layout(prog = 'dot')
+#        return g
+#
+#    def draw_graph(self, filename):
+#        """Draw gene network using graphviz.  Output PNG file."""
+#        self.graph.draw(filename)
+#
+#    def connected(self):
+#        """
+#        Test whether gene network is connected.
+#
+#        """
+#        ug = nx.Graph(data = self.graph)
+#        cc = nx.connected_components(ug)
+#        return len(cc) == 1
 
     @staticmethod
     def generate_random(n_genes, connectivity):
