@@ -9,6 +9,7 @@ import numpy as np
 import numpy.random as rnd
 import pygraphviz as pgv
 import networkx as nx
+from scipy.stats import poisson
 
 class Genotype(object):
     """
@@ -138,6 +139,55 @@ class Genotype(object):
         rnd.shuffle(flat_matrix)
         return Genotype(np.reshape(flat_matrix, (n_genes, n_genes)))
 
+    @staticmethod #not sure if staticmethod is correct for this
+    def mutate_genotype(n_genes, connectivity, mut_rate, matrix):
+        """
+        Mutates an existing matrix given **n_genes**, **connectivity**, **mut_rate**, and the gene network matrix (e.g. x.gene_network)
+
+        .. note::
+            I am not sure if all of these need to be arguments or whether we can get the values from the earlier properties in the code
+            This method currently changes the matrix that is sent in to it - it does not keep the original matrix intact and create another one.
+            We'll have to discuss which way would be the best for our purposes.
+
+            Right now, the code reads through each element in the matrix and if it is non-zero, it mutates via a Poisson process
+            with probability mut_rate/(connectivity*n_sites). I need to check to make sure this is correct. If a mutation occurs,
+            the matrix element is replaced with an independent standard normal random variate.
+
+            An alternative way of writing this code would be to sum the number of non-zero elements, determine how many will mutate
+            using a Poisson process, then randomly choose the non-zero element(s) to mutate. I think this method would take longer
+            since you would need to loop through the matrix twice: once for counting non-zero elements and again to determine which
+            ones will mutate. But if there is some benefit to that method, it would be easy to switch.
+
+        :param n_genes: number of genes
+        :type n_genes: int
+        :param connectivity: connectivity density
+        :type connectivity: float
+        :param mut_rate: mutation rate per individual network per generation
+        :type mut_rate: float
+        :param matrix: gene network matrix
+        :return: mutated Genotype object
+
+        >>> net = Genotype.generate_random(4, .3)
+        >>> net.connectivity
+        0.25
+        >>> net_mut = Genotype.mutate_genotype(net.n_genes, net.connectivity, .1, net.gene_network)
+        >>> net_mut.connectivity
+        0.25
+
+        """
+        n_sites = n_genes * n_genes
+        for i in range(0,n_genes):
+            for j in range(0,n_genes):
+                if matrix[i][j] != 0:
+                    mutate = poisson.rvs(mut_rate/(connectivity*n_sites), size=1)
+                    if mutate > 0:
+                        matrix[i][j] = rnd.normal(size=1)
+                        #print 'mutated element [' + repr(i) + '][' + repr(j) + ']'
+                    else:
+                        pass
+                else:
+                    pass
+        return Genotype(matrix)  #caution: changes original matrix!
 
 
 if __name__ == "__main__":
