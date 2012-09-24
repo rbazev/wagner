@@ -6,11 +6,13 @@ Contains the Genotype class.
 
 """
 
+import copy
 import numpy as np
 import numpy.random as rnd
 #import pygraphviz as pgv
 import networkx as nx
-from scipy.stats import poisson
+#from scipy.stats import poisson
+
 
 __author__ = 'Ricardo Azevedo, Christina Burch, Kayla Peck, Amanda Whitlock'
 __version__ = "0.0.1"
@@ -203,6 +205,15 @@ class Genotype(object):
             self.mutation_rate = self.n_interactions
         else:
             self.mutation_rate = mutation_rate
+
+    def generate_asexual_offspring(self):
+        """
+        Generate copy of a Genotype, allowing mutations to occur.
+        Return a new Genotype object.
+        """
+        offspring = copy.deepcopy(self)
+        offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
+        return offspring
 
 #    @staticmethod #not sure if staticmethod is correct for this
 #    def mutate_genotype(n_genes, connectivity, mut_rate, matrix):
