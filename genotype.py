@@ -158,6 +158,11 @@ class Genotype(object):
             since you would need to loop through the matrix twice: once for counting non-zero elements and again to determine which
             ones will mutate. But if there is some benefit to that method, it would be easy to switch.
 
+            CB: As part of the decision between these two ways of doing things, we should decide whether the location of the non-zero
+            matrix elements should be an attribute of the Genotype object.  I'm not sure attribute is the right word.  What I mean is
+            a property that is calculated once for each individual and then passed in and out of mutate.
+
+
         :param n_genes: number of genes
         :type n_genes: int
         :param connectivity: connectivity density
@@ -179,8 +184,8 @@ class Genotype(object):
         for i in range(0,n_genes):
             for j in range(0,n_genes):
                 if matrix[i][j] != 0:
-                    mutate = poisson.rvs(mut_rate/(connectivity*n_sites), size=1)
-                    if mutate > 0:
+                    mutate = poisson.rvs(mut_rate/(connectivity*n_sites), size=1) #CB: I think this needs to be a uniform random variate - which will also affect the next line
+                    if mutate > 0: #CB: If mutate is a uniform random variate between 0 and 1, change this line to if mutate > mut_rate/(connectivity*n_sites):
                         matrix[i][j] = rnd.normal(size=1)
                         #print 'mutated element [' + repr(i) + '][' + repr(j) + ']'
                     else:
