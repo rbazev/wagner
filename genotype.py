@@ -1,9 +1,10 @@
 """
+genotype.py: implementation of the gene network model described in Siegal & Bergman (2002) Waddington's canalization
+    revisited: developmental stability and evolution. PNAS 99: 10528-32.
+
 Contains the Genotype class.
 
 """
-
-__author__ = 'Ricardo Azevedo'
 
 import numpy as np
 import numpy.random as rnd
@@ -11,29 +12,34 @@ import pygraphviz as pgv
 import networkx as nx
 from scipy.stats import poisson
 
+__author__ = 'Ricardo Azevedo, Christina Burch, Kayla Peck, Amanda Whitlock'
+__version__ = "0.0.1"
+
 class Genotype(object):
     """
     A gene network defined as described in: Wagner (1996) Does evolutionary plasticity evolve? *Evolution* 50: 1008-1023.
 
-    **Attributes:**
+    Attributes:
 
-    * **adj_matrix** -- adjacency matrix representation of the gene network
-    * **connectivity** -- connectivity density
-    * **gene_network** -- matrix representation of the gene network such that columns represent regulators and rows represent their targets
-    * **graph** -- PyGraphviz representation of the gene network
-    * **n_genes** -- number of genes
-    * **n_interactions** -- number of (nonzero) interactions in the gene network
-    * **mean_abs_strength** -- mean absolute strength of interactions (excluding zeros)
+        adj_matrix: adjacency matrix representation of the gene network
+        connectivity: connectivity density
+        gene_network: matrix representation of the gene network such that columns represent regulators and rows represent
+            their targets
+        graph: PyGraphviz representation of the gene network
+        n_genes: number of genes
+        n_interactions: number of (nonzero) interactions in the gene network
+        mean_abs_strength: mean absolute strength of interactions (excluding zeros)
 
     """
 
     def __init__(self, matrix):
         """
-        Create Genotype object based on a matrix.  Check that the matrix is square and a *numpy.ndarray*.
+        Create Genotype object based on a matrix.  Check that the matrix is square and a numpy.ndarray.
 
-        :param matrix: matrix representation of the gene network such that columns represent regulators and rows represent their targets
-        :type matrix: numpy.ndarray
-        :return: Genotype object
+        Parameters:
+
+            matrix: matrix representation of the gene network such that columns represent regulators and rows represent
+                their targets (type: numpy.ndarray)
 
         >>> net = Genotype(np.array([[-1.,  0., -1.,  0.], [ 0.,  3.,  0.,  0.], [ 1.,  0.,  0.,  1.], [ 0.,  2.,  1.,  1.]]))
         >>> net.connectivity
@@ -52,21 +58,26 @@ class Genotype(object):
 
     @property
     def n_genes(self):
+        """Number of genes in the network."""
         return len(self.gene_network.diagonal())
 
     @property
     def adj_matrix(self):
-        """A matrix with the same structure as the **gene_network** but where 1 and 0 correspond to the presence and absence of an interaction, respectively."""
+        """
+        Adjacency matrix representation of the network.  A matrix with the same structure as the gene_network but where
+        1 and 0 correspond to the presence and absence of an interaction, respectively.
+        """
         # multiplying by 1. changes the dtype from bool to float
         return (self.gene_network != 0) * 1.
 
     @property
     def connectivity(self):
-        """The connectivity density of the network."""
+        """Connectivity density of the network."""
         return self.adj_matrix.sum() / (self.n_genes * self.n_genes)
 
     @property
     def n_interactions(self):
+        """Number of nonzero interactions between genes."""
         return self.connectivity * np.power(self.n_genes, 2)
 
     @property
@@ -106,10 +117,7 @@ class Genotype(object):
         self.graph.draw(filename)
 
     def connected(self):
-        """
-        Test whether gene network is connected.
-
-        """
+        """Test whether gene network is connected."""
         ug = nx.Graph(data = self.graph)
         cc = nx.connected_components(ug)
         return len(cc) == 1
@@ -117,16 +125,15 @@ class Genotype(object):
     @staticmethod
     def generate_random(n_genes, connectivity):
         """
-        Generate random genotype with a given **n_genes** and **connectivity**.  Sample weights from standard normal distribution.
+        Generate random genotype with a given n_genes and connectivity.  Sample weights from standard normal distribution.
 
-        .. note::
-           The realized **connectivity** will be different from the entered value if **n_genes** * **n_genes** * **connectivity** is not an integer (see code example below).
+        Note:
+            The realized connectivity will be different from the entered value if n_genes * n_genes * connectivity is not
+            an integer (see code example below).
 
-        :param n_genes: number of genes
-        :type n_genes: int
-        :param connectivity: connectivity density
-        :type connectivity: float
-        :return: Genotype object
+        Parameters:
+            n_genes: number of genes (type: int)
+            connectivity: connectivity density (type: float)
 
         >>> net = Genotype.generate_random(4, .3)
         >>> net.connectivity
@@ -142,9 +149,9 @@ class Genotype(object):
     @staticmethod #not sure if staticmethod is correct for this
     def mutate_genotype(n_genes, connectivity, mut_rate, matrix):
         """
-        Mutates an existing matrix given **n_genes**, **connectivity**, **mut_rate**, and the gene network matrix (e.g. x.gene_network)
+        Mutates an existing matrix given n_genes, connectivity, mut_rate, and the gene network matrix (e.g. x.gene_network)
 
-        .. note::
+        Note:
             I am not sure if all of these need to be arguments or whether we can get the values from the earlier properties in the code
             This method currently changes the matrix that is sent in to it - it does not keep the original matrix intact and create another one.
             We'll have to discuss which way would be the best for our purposes.
@@ -158,14 +165,11 @@ class Genotype(object):
             since you would need to loop through the matrix twice: once for counting non-zero elements and again to determine which
             ones will mutate. But if there is some benefit to that method, it would be easy to switch.
 
-        :param n_genes: number of genes
-        :type n_genes: int
-        :param connectivity: connectivity density
-        :type connectivity: float
-        :param mut_rate: mutation rate per individual network per generation
-        :type mut_rate: float
-        :param matrix: gene network matrix
-        :return: mutated Genotype object
+        Parameters:
+            n_genes: number of genes (type: int)
+            connectivity: connectivity density (type: float)
+            mut_rate: mutation rate per individual network per generation (type: float)
+            matrix: gene network matrix
 
         >>> net = Genotype.generate_random(4, .3)
         >>> net.connectivity
