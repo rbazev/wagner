@@ -85,6 +85,12 @@ class Genotype(object):
         """Mean absolute strength of interactions (excluding zeros)."""
         return np.abs(self.gene_network).sum() / self.n_interactions
 
+    @property
+    def graph(self):
+        """NetworkX representation of the gene network."""
+        g = nx.DiGraph(data = self.gene_network.transpose())
+        return g
+
 #    @property
 #    def graph(self):
 #        """PyGraphviz representation of the gene network"""
@@ -115,12 +121,28 @@ class Genotype(object):
 #    def draw_graph(self, filename):
 #        """Draw gene network using graphviz.  Output PNG file."""
 #        self.graph.draw(filename)
-#
-#    def connected(self):
-#        """Test whether gene network is connected."""
-#        ug = nx.Graph(data = self.graph)
-#        cc = nx.connected_components(ug)
-#        return len(cc) == 1
+
+    @property
+    def connected_components(self):
+        """
+        Connected components.  Return list containing lists of nodes in each connected component.
+        """
+        return nx.connected_components(self.graph.to_undirected())
+
+    @property
+    def is_connected(self):
+        """Whether the gene network is connected (type: bool)."""
+        return len(self.connected_components) == 1
+
+    def draw_graph(self):
+        """
+        Draw gene network using matplotlib.
+
+        Note:
+            These are crude plots.  Genes are labelled from 0.  Thick ends represent arrows.
+            Self interactions are not shown.
+        """
+        nx.draw(self.graph)
 
     @staticmethod
     def generate_random(n_genes, connectivity):
