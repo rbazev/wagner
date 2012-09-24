@@ -46,11 +46,6 @@ class Genotype(object):
         0.5
         >>> net.n_genes
         4
-        >>> net.adj_matrix
-        array([[ 1.,  0.,  1.,  0.],
-               [ 0.,  1.,  0.,  0.],
-               [ 1.,  0.,  0.,  1.],
-               [ 0.,  1.,  1.,  1.]])
         """
         assert type(matrix) is np.ndarray
         assert matrix.shape[0] == matrix.shape[1]
@@ -62,35 +57,26 @@ class Genotype(object):
         return len(self.gene_network.diagonal())
 
     @property
-    def adj_matrix(self):
-        """
-        Adjacency matrix representation of the network.  A matrix with the same structure as the gene_network but where
-        1 and 0 correspond to the presence and absence of an interaction, respectively.
-        """
-        # multiplying by 1. changes the dtype from bool to float
-        return (self.gene_network != 0) * 1.
-
-    @property
-    def connectivity(self):
-        """Connectivity density of the network."""
-        return self.adj_matrix.sum() / (self.n_genes * self.n_genes)
-
-    @property
-    def n_interactions(self):
-        """Number of nonzero interactions between genes."""
-        return self.connectivity * np.power(self.n_genes, 2)
-
-    @property
-    def mean_abs_strength(self):
-        """Mean absolute strength of interactions (excluding zeros)."""
-        return np.abs(self.gene_network).sum() / self.n_interactions
-
-    @property
     def graph(self):
         """NetworkX representation of the gene network."""
         g = nx.DiGraph(data = self.gene_network.transpose())
         return g
 
+    @property
+    def n_interactions(self):
+        """Number of nonzero interactions between genes."""
+        return len(self.graph.edges())
+
+    @property
+    def connectivity(self):
+        """Connectivity density of the network."""
+        return  self.n_interactions / float(self.n_genes * self.n_genes)
+
+#    @property
+#    def mean_abs_strength(self):
+#        """Mean absolute strength of interactions (excluding zeros)."""
+#        return np.abs(self.gene_network).sum() / self.n_interactions
+#
 #    @property
 #    def graph(self):
 #        """PyGraphviz representation of the gene network"""
@@ -182,10 +168,10 @@ class Genotype(object):
         """
         self.gene_network[target, regulator] = new_strength
 
-#    def mutate_random(self):
-#        """
-#       
-#        """
+    def mutate_random(self, ):
+        """
+
+        """
 
 #    @staticmethod #not sure if staticmethod is correct for this
 #    def mutate_genotype(n_genes, connectivity, mut_rate, matrix):
