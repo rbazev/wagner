@@ -187,6 +187,9 @@ class Genotype(object):
             since you would need to loop through the matrix twice: once for counting non-zero elements and again to determine which
             ones will mutate. But if there is some benefit to that method, it would be easy to switch.
 
+            CB: In making the decision between these alternatives, we should consider making the locations of non-zero matrix elements
+            an attribute of the genotype.
+
         Parameters:
             n_genes: number of genes (type: int)
             connectivity: connectivity density (type: float)
@@ -206,7 +209,9 @@ class Genotype(object):
             for j in range(0,n_genes):
                 if matrix[i][j] != 0:
                     mutate = poisson.rvs(mut_rate/(connectivity*n_sites), size=1)
+                    #CB: Discuss whether this needs to be a random uniform variate between 0 and 1...
                     if mutate > 0:
+                        #CB: and then this line would change to if mutate > mut_rate/(connectivity*n_sites):
                         matrix[i][j] = rnd.normal(size=1)
                         #print 'mutated element [' + repr(i) + '][' + repr(j) + ']'
                     else:
