@@ -63,9 +63,14 @@ class Genotype(object):
         return g
 
     @property
+    def interactions(self):
+        """List of interactions in the form (regulator, target)."""
+        return self.graph.edges()
+
+    @property
     def n_interactions(self):
         """Number of nonzero interactions between genes."""
-        return len(self.graph.edges())
+        return len(self.interactions)
 
     @property
     def connectivity(self):
@@ -168,10 +173,27 @@ class Genotype(object):
         """
         self.gene_network[target, regulator] = new_strength
 
-    def mutate_random(self, ):
+    def mutate_random(self, n_mutations):
         """
+        Mutate a given number of random interactions.  Sample new interaction strengths from standard normal distribution.
+        Ensure that (i) mutations can only affect nonzero interactions, and (ii) the same interaction cannot be changed
+        twice.
 
+        Parameters:
+
+            n_mutations: number of mutations
         """
+        if n_mutations > self.n_interactions:
+            n_mutations = self.n_interactions
+        new_strengths = rnd.normal(size = n_mutations)
+        mut_interactions = []
+        while len(mut_interactions) < n_mutations:
+            x = rnd.randint(0, self.n_interactions)
+            if not x in mut_interactions:
+                mut_interactions.append(x)
+        for i in range(n_mutations):
+            interaction = self.interactions[mut_interactions[i]]
+            self.mutate(interaction[0], interaction[1], new_strengths[i])
 
 #    @staticmethod #not sure if staticmethod is correct for this
 #    def mutate_genotype(n_genes, connectivity, mut_rate, matrix):
@@ -224,7 +246,6 @@ class Genotype(object):
 #                else:
 #                    pass
 #        return Genotype(matrix)  #caution: changes original matrix!
-
 
 if __name__ == "__main__":
     import doctest
