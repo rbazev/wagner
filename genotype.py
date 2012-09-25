@@ -166,10 +166,15 @@ class Genotype(object):
         Draw gene network using matplotlib.
 
         Note:
-            These are crude plots.  Genes are labelled from 0.  Thick ends represent arrows.
-            Self interactions are not shown.
+            Genes are labelled from 0.  Thick ends touch target genes.
+            Self interactions are shown as gray nodes.
         """
-        nx.draw(self.graph)
+        node_cols = ['white'] * self.n_genes
+        diag = self.gene_network.diagonal()
+        for i in range(self.n_genes):
+            if diag[i] != 0:
+                node_cols[i] = 'gray'
+        nx.draw(self.graph, node_color = node_cols)
 
     @staticmethod
     def generate_random(n_genes, connectivity):
