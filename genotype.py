@@ -43,11 +43,11 @@ class Genotype(object):
             matrix: matrix representation of the gene network such that columns represent regulators and rows represent
                 their targets (type: numpy.ndarray)
 
-        >>> net = Genotype(np.array([[-1.,  0., -1.,  0.], [ 0.,  3.,  0.,  0.], [ 1.,  0.,  0.,  1.], [ 0.,  2.,  1.,  1.]]))
-        >>> net.connectivity
-        0.5
-        >>> net.n_genes
-        4
+        >>> net = Genotype(np.array([[-1.,  0., -1.], [ 0.,  3.,  0.], [ 0.,  2., 1.]]))
+        >>> net.gene_network
+        array([[-1.,  0., -1.],
+               [ 0.,  3.,  0.],
+               [ 0.,  2.,  1.]])
         """
         assert type(matrix) is np.ndarray
         assert matrix.shape[0] == matrix.shape[1]
@@ -55,7 +55,13 @@ class Genotype(object):
 
     @property
     def n_genes(self):
-        """Number of genes in the network."""
+        """
+        Number of genes in the network.
+
+        >>> net = Genotype.generate_random(10, .35)
+        >>> net.n_genes
+        10
+        """
         return len(self.gene_network.diagonal())
 
     @property
@@ -66,17 +72,35 @@ class Genotype(object):
 
     @property
     def interactions(self):
-        """List of interactions in the form (regulator, target)."""
+        """
+        List of interactions in the form (regulator, target).
+
+        >>> net = Genotype(np.array([[-1.,  0., -1.], [ 0.,  3.,  0.], [ 0.,  2., 1.]]))
+        >>> net.interactions
+        [(0, 0), (1, 1), (1, 2), (2, 0), (2, 2)]
+        """
         return self.graph.edges()
 
     @property
     def n_interactions(self):
-        """Number of nonzero interactions between genes."""
+        """
+        Number of nonzero interactions between genes.
+
+        >>> net = Genotype.generate_random(10, .42)
+        >>> net.n_interactions
+        42
+        """
         return len(self.interactions)
 
     @property
     def connectivity(self):
-        """Connectivity density of the network."""
+        """
+        Connectivity density of the network.
+
+        >>> net = Genotype.generate_random(10, .55)
+        >>> net.connectivity
+        0.55
+        """
         return  self.n_interactions / float(self.n_genes * self.n_genes)
 
 #    @property
@@ -119,12 +143,22 @@ class Genotype(object):
     def connected_components(self):
         """
         Connected components.  Return list containing lists of nodes in each connected component.
+
+        >>> net = Genotype(np.array([[-1.,  0., -1.], [ 0.,  3.,  0.], [ 0.,  0., 1.]]))
+        >>> net.connected_components
+        [[0, 2], [1]]
         """
         return nx.connected_components(self.graph.to_undirected())
 
     @property
     def is_connected(self):
-        """Whether the gene network is connected (type: bool)."""
+        """
+        Whether the gene network is connected (type: bool).
+
+        >>> net = Genotype(np.array([[-1.,  0., -1.], [ 0.,  3.,  0.], [ 0.,  0., 1.]]))
+        >>> net.is_connected
+        False
+        """
         return len(self.connected_components) == 1
 
     def draw_graph(self):
@@ -172,6 +206,13 @@ class Genotype(object):
             regulator: number of regulator gene
             target: number of target gene
             new_strength: new interaction strength
+
+        >>> net = Genotype(np.array([[-1.,  0., -1.], [ 0.,  3.,  0.], [ 0.,  0., 1.]]))
+        >>> net.mutate(1, 2, 9.)
+        >>> net.gene_network
+        array([[-1.,  0., -1.],
+               [ 0.,  3.,  0.],
+               [ 0.,  9.,  1.]])
         """
         self.gene_network[target, regulator] = new_strength
 
@@ -184,6 +225,11 @@ class Genotype(object):
         Parameters:
 
             n_mutations: number of mutations
+
+        >>> net = Genotype.generate_random(4, .3)
+        >>> net.mutate_random(5)
+        >>> net.connectivity
+        0.25
         """
         if n_mutations > self.n_interactions:
             n_mutations = self.n_interactions
@@ -200,6 +246,11 @@ class Genotype(object):
     def set_mutation_rate(self, mutation_rate):
         """
         Set mutation rate per genome per generation, that is, the expected number of mutations per generation.
+
+        >>> net = Genotype.generate_random(4, .33)
+        >>> net.set_mutation_rate(1.2)
+        >>> net.mutation_rate
+        1.2
         """
         if mutation_rate > self.n_interactions:
             self.mutation_rate = self.n_interactions
@@ -210,6 +261,12 @@ class Genotype(object):
         """
         Generate copy of a Genotype, allowing mutations to occur.
         Return a new Genotype object.
+
+        >>> net = Genotype.generate_random(4, .5)
+        >>> net.set_mutation_rate(1.2)
+        >>> daughter_net = net.generate_asexual_offspring()
+        >>> daughter_net.connectivity
+        0.5
         """
         offspring = copy.deepcopy(self)
         offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
