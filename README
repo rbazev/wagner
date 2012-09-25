@@ -18,7 +18,7 @@ CONTENTS
     C. Unix/Linux
         *IPython included in package manager is too old to support notebook.
         Add "http://packages.debian.org/testing/python/" to sources list and install IPython 0.13+ and notebook from there
-
+	* Git version included in package manager is too old to support current github, must install current version from source
 
 
 2. Introduction to the Code
