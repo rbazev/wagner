@@ -9,6 +9,7 @@ Contains the Genotype class.
 import copy
 import numpy as np
 import numpy.random as rnd
+import random
 #import pygraphviz as pgv
 import networkx as nx
 #from scipy.stats import poisson
@@ -214,12 +215,31 @@ class Genotype(object):
         offspring = copy.deepcopy(self)
         offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
         return offspring
+       
+   
+    def generate_sexual_offspring(self,genotype2): 
+    """
+    How will we choose the 2 genotypes to reproduce? I used self & genotype 2 as stand-ins in this case 
+    but also wrote another version as a static method so that it would be a symmetrical process. 
+    """
+    offspring = copy.deepcopy(self)
+    for x in range(0, n_genes): #iterate through loop * n_genes, ie for each row in the matrix
+        parent = random.random()  #randomly pick which parent will contribute each row of the matrix
+        if parent >= .5:
+            chosen_genotype = self           
+        else:
+            chosen_genotype = genotype2
+        row = chosen_genotype[x] #set row x of the parent chosen equal to row
+        offspring[x] = row #add row x of the parent chosen to the offspring's genotype
+        offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
+    return offspring
 
 #    @staticmethod #not sure if staticmethod is correct for this
 #    def mutate_genotype(n_genes, connectivity, mut_rate, matrix):
 #        """
 #        Mutates an existing matrix given n_genes, connectivity, mut_rate, and the gene network matrix (e.g. x.gene_network)
 #
+
 #        Note:
 #            I am not sure if all of these need to be arguments or whether we can get the values from the earlier properties in the code
 #            This method currently changes the matrix that is sent in to it - it does not keep the original matrix intact and create another one.
