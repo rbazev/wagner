@@ -19,7 +19,7 @@ __author__ = 'Ricardo Azevedo, Christina Burch, Kayla Peck, Amanda Whitlock'
 __version__ = "0.0.1"
 
 class Genotype(object):
-    """
+    """ 
     A gene network defined as described in: Wagner (1996) Does evolutionary plasticity evolve? *Evolution* 50: 1008-1023.
 
     Attributes:
@@ -262,38 +262,18 @@ class Genotype(object):
             self.mutation_rate = self.n_interactions
         else:
             self.mutation_rate = mutation_rate
-
-    def generate_asexual_offspring(self):
-        """
-        Generate copy of a Genotype, allowing mutations to occur.
-        Return a new Genotype object.
-
-        >>> net = Genotype.generate_random(4, .5)
-        >>> net.set_mutation_rate(1.2)
-        >>> daughter_net = net.generate_asexual_offspring()
-        >>> daughter_net.connectivity
-        0.5
-        """
-        offspring = copy.deepcopy(self)
-        offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
-        return offspring
-       
    
-    def generate_sexual_offspring(self,genotype2): 
-        """
-        How will we choose the 2 genotypes to reproduce? I used self & genotype 2 as stand-ins in this case
-        but also wrote another version as a static method so that it would be a symmetrical process.
-        """
-        offspring = copy.deepcopy(self)
-        for x in range(0, n_genes): #iterate through loop * n_genes, ie for each row in the matrix
+    @staticmethod
+    def generate_sexual_offspring(genotype1,genotype2):
+        offspring = copy.deepcopy(genotype1)  #ideally, i'd create an empty Genotype object to fill, but was unsuccessful
+        for x in range(0, genotype1.n_genes): #iterate through loop * n_genes, ie for each row in the matrix
             parent = random.random()  #randomly pick which parent will contribute each row of the matrix
             if parent >= .5:
-                chosen_genotype = self
+                chosen_genotype = g1
             else:
-                chosen_genotype = genotype2
-            row = chosen_genotype[x] #set row x of the parent chosen equal to row
-            offspring[x] = row #add row x of the parent chosen to the offspring's genotype
-            offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
+                chosen_genotype = g2
+            row = chosen_genotype.gene_network[x] #set row x of the parent chosen equal to row
+            offspring.gene_network[x] = row #add row x of the parent chosen to the offspring's genotype
         return offspring
 
 #    @staticmethod #not sure if staticmethod is correct for this
