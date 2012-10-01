@@ -262,6 +262,21 @@ class Genotype(object):
             self.mutation_rate = self.n_interactions
         else:
             self.mutation_rate = mutation_rate
+            
+    def generate_asexual_offspring(self):
+        """
+        Generate copy of a Genotype, allowing mutations to occur.
+        Return a new Genotype object.
+
+        >>> net = Genotype.generate_random(4, .5)
+        >>> net.set_mutation_rate(1.2)
+        >>> daughter_net = net.generate_asexual_offspring()
+        >>> daughter_net.connectivity
+        0.5
+        """
+        offspring = copy.deepcopy(self)
+        offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
+        return offspring
    
     @staticmethod
     def generate_sexual_offspring(genotype1,genotype2):
