@@ -279,16 +279,18 @@ class Genotype(object):
         return offspring
    
     @staticmethod
-    def generate_sexual_offspring(genotype1,genotype2):
-        offspring = copy.deepcopy(genotype1)  #ideally, i'd create an empty Genotype object to fill, but was unsuccessful
-        for x in range(0, genotype1.n_genes): #iterate through loop * n_genes, ie for each row in the matrix
+    def recombine(genotype1,genotype2):
+        gene_num = genotype1.n_genes
+        newmatrix = np.zeros((gene_num, gene_num)) 
+        for x in range(0, gene_num): #iterate through loop * n_genes, ie for each row in the matrix
             parent = random.random()  #randomly pick which parent will contribute each row of the matrix
             if parent >= .5:
-                chosen_genotype = g1
+                chosen_genotype = genotype1
             else:
-                chosen_genotype = g2
+                chosen_genotype = genotype2
             row = chosen_genotype.gene_network[x] #set row x of the parent chosen equal to row
-            offspring.gene_network[x] = row #add row x of the parent chosen to the offspring's genotype
+            newmatrix[x] = row #add row x of the parent chosen to the offspring's genotype
+        offspring = Genotype(newmatrix)
         return offspring
 
 
