@@ -12,7 +12,7 @@ import numpy.random as rnd
 import random
 #import pygraphviz as pgv
 import networkx as nx
-#from scipy.stats import poisson
+import math
 
 
 __author__ = 'Ricardo Azevedo, Christina Burch, Kayla Peck, Amanda Whitlock'
@@ -292,6 +292,60 @@ class Genotype(object):
             newmatrix[x] = row #add row x of the parent chosen to the offspring's genotype
         offspring = Genotype(newmatrix)
         return offspring
+
+
+    def initial_expression_state(self):
+        '''
+        Generate an initial expression state - an array of size n_genes, filled randomly with 1 or -1
+        '''
+        flat_matrix = np.ones(self.n_genes, dtype=np.int)
+        for x in range(0,self.n_genes):
+            if random.random() > 0.5:
+                flat_matrix[x] = -1
+        self.initial_expression_state = flat_matrix
+
+    def set_activation_constant(self, activation_constant):
+        '''
+        Sets the activation constant and makes sure it is non-negative
+        '''
+        if activation_constant < 0:
+            print "activation constant must be greater than 0"
+        self.activation_constant = activation_constant
+
+    def development(self, n_steps):
+        '''
+        Simulates development - multiplies gene network R by initial expresssion state S(0) for n_steps number of times
+        For each product, it is passed through the sigmoidal filter function (see supplementary information for 2006 paper)
+        which then acts as S(t). The last 10 S states are assigned to the equilibrium expression state variable to be checked for stability.
+        '''
+        S = []
+        self.equilibrium_expression_state = []
+        S.append(self.initial_expression_state)
+        for t in range(0,n_steps):
+            S_t = np.dot(self.gene_network, S[t])
+            S_filter = []
+            for x in range(0, len(S_t)):
+                S_filter.append(2/(1+math.exp(-self.activation_constant*S_t[x])) - 1)
+            S.append(S_filter)
+            if t >= n_steps-10:
+                self.equilibrium_expression_state.append(S[t]) #logs last 10 states of S
+
+    def check_equilibrium(self):
+        '''
+        Checks the equilibrium expression state of the gene network. Uses the last 10 states of S during development. If
+        the final sum is less than 10-3, it is stable.
+
+        Note: not sure the format in which we would need to return whether it's stable or not.
+        '''
+        total_sum = 0
+        for x in range (1,10):
+            sum_single_comparison = sum(np.subtract(self.equilibrium_expression_state[0], self.equilibrium_expression_state[x])**2)/(4*self.n_genes)
+            total_sum = total_sum + sum_single_comparison
+        if total_sum < 0.001:
+            return 0    #stable
+        else:
+            return 1    #unstable -- how do we want these values returned?
+            #math needs to be tested
 
 
 if __name__ == "__main__":
