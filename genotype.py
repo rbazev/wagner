@@ -307,6 +307,15 @@ class Genotype(object):
         assert activation_constant > 0
         self.activation_constant = activation_constant
 
+    @staticmethod
+    def sigmoidal_filter_function(activation_constant, current_expression_state_index):
+        '''
+        Calculates the expression level of a gene by filtering the total regulatory input for the gene using the sigmoidal function
+        f(x) = 2/(1+e^-ax) - 1. See Supplementary Figure 1.
+        '''
+        return (2/(1+math.exp(-activation_constant*current_expression_state_index)) - 1)
+
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
