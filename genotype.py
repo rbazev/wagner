@@ -339,7 +339,14 @@ class Genotype(object):
         assert tau < len(self.gene_expression_pattern)
         self.tau = tau
 
-    
+    def average_expression_pattern(self):
+        '''
+        Calculates the average expression pattern from the last tau expression states
+        '''
+        interval_expression_pattern = self.gene_expression_pattern[(len(self.gene_expression_pattern)-self.tau):len(self.gene_expression_pattern)]
+        self.average_expression_pattern = np.mean(interval_expression_pattern, axis=0)
+
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
