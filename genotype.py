@@ -300,6 +300,12 @@ class Genotype(object):
         '''
         self.initial_expression_state = np.round(rnd.random(self.n_genes))*2 - 1
 
+    def set_activation_constant(self, activation_constant):
+        '''
+        Sets the activation constant and makes sure it is non-negative
+        '''
+        assert activation_constant > 0
+        self.activation_constant = activation_constant
 
 if __name__ == "__main__":
     import doctest
