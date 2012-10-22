@@ -104,41 +104,41 @@ class Genotype(object):
         """
         return  self.n_interactions / float(self.n_genes * self.n_genes)
 
-#    @property
-#    def mean_abs_strength(self):
-#        """Mean absolute strength of interactions (excluding zeros)."""
-#        return np.abs(self.gene_network).sum() / self.n_interactions
-#
-#    @property
-#    def graph(self):
-#        """PyGraphviz representation of the gene network"""
-#        g = pgv.AGraph(directed = True, strict = False)
-#        g.node_attr['fontname'] = 'helvetica'
-#        g.node_attr['fontsize'] = 16
-#        g.node_attr['shape'] = 'circle'
-#        g.node_attr['color'] = 'gray'
-#        g.node_attr['style'] = 'filled'
-#        # add genes
-#        for gene in range(self.n_genes):
-#            g.add_node(gene)
-#        # add interactions
-#        for regulator in range(self.n_genes):
-#            for target in range(self.n_genes):
-#                weight = self.gene_network[target, regulator]
-#                if weight:
-#                    g.add_edge(str(regulator), str(target))
-#                    e = g.get_edge(str(regulator), str(target))
-#                    e.attr['penwidth'] = np.abs(weight) / self.mean_abs_strength
-#                    e.attr['color'] = 'red'
-#                    if weight < 0:
-#                        e.attr['color'] = 'blue'
-#                        e.attr['arrowhead'] = 'tee'
-#        g.layout(prog = 'dot')
-#        return g
-#
-#    def draw_graph(self, filename):
-#        """Draw gene network using graphviz.  Output PNG file."""
-#        self.graph.draw(filename)
+    #    @property
+    #    def mean_abs_strength(self):
+    #        """Mean absolute strength of interactions (excluding zeros)."""
+    #        return np.abs(self.gene_network).sum() / self.n_interactions
+    #
+    #    @property
+    #    def graph(self):
+    #        """PyGraphviz representation of the gene network"""
+    #        g = pgv.AGraph(directed = True, strict = False)
+    #        g.node_attr['fontname'] = 'helvetica'
+    #        g.node_attr['fontsize'] = 16
+    #        g.node_attr['shape'] = 'circle'
+    #        g.node_attr['color'] = 'gray'
+    #        g.node_attr['style'] = 'filled'
+    #        # add genes
+    #        for gene in range(self.n_genes):
+    #            g.add_node(gene)
+    #        # add interactions
+    #        for regulator in range(self.n_genes):
+    #            for target in range(self.n_genes):
+    #                weight = self.gene_network[target, regulator]
+    #                if weight:
+    #                    g.add_edge(str(regulator), str(target))
+    #                    e = g.get_edge(str(regulator), str(target))
+    #                    e.attr['penwidth'] = np.abs(weight) / self.mean_abs_strength
+    #                    e.attr['color'] = 'red'
+    #                    if weight < 0:
+    #                        e.attr['color'] = 'blue'
+    #                        e.attr['arrowhead'] = 'tee'
+    #        g.layout(prog = 'dot')
+    #        return g
+    #
+    #    def draw_graph(self, filename):
+    #        """Draw gene network using graphviz.  Output PNG file."""
+    #        self.graph.draw(filename)
 
     @property
     def connected_components(self):
@@ -262,7 +262,7 @@ class Genotype(object):
             self.mutation_rate = self.n_interactions
         else:
             self.mutation_rate = mutation_rate
-            
+
     def generate_asexual_offspring(self):
         """
         Generate copy of a Genotype, allowing mutations to occur.
@@ -277,29 +277,56 @@ class Genotype(object):
         offspring = copy.deepcopy(self)
         offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
         return offspring
-   
+
     @staticmethod
-    def recombine(genotype1,genotype2):
-        gene_num = genotype1.n_genes
-        newmatrix = np.zeros((gene_num, gene_num)) 
-        for x in range(0, gene_num): #iterate through loop * n_genes, ie for each row in the matrix
+    def generate_sexual_offspring(genotype1,genotype2):
+        offspring = copy.deepcopy(genotype1)  #ideally, i'd create an empty Genotype object to fill, but was unsuccessful
+        for x in range(0, genotype1.n_genes): #iterate through loop * n_genes, ie for each row in the matrix
             parent = random.random()  #randomly pick which parent will contribute each row of the matrix
             if parent >= .5:
-                chosen_genotype = genotype1
+                chosen_genotype = g1
             else:
-                chosen_genotype = genotype2
+                chosen_genotype = g2
             row = chosen_genotype.gene_network[x] #set row x of the parent chosen equal to row
-            newmatrix[x] = row #add row x of the parent chosen to the offspring's genotype
-        offspring = Genotype(newmatrix)
+            offspring.gene_network[x] = row #add row x of the parent chosen to the offspring's genotype
         return offspring
 
+    def initial_expression_state(self):
+        flat_matrix = np.ones(self.n_genes, dtype=np.int)
+        for x in range(0,self.n_genes):
+            if random.random() > 0.5:
+                flat_matrix[x] = -1
+        return flat_matrix
+        #needs to be tested
 
-    def generate_random_initial_expression_state(self):
-        '''
-        Generate an initial expression state - an array of size n_genes, filled randomly with 1 or -1
-        '''
-        self.initial_expression_state = np.round(rnd.random(self.n_genes))*2 - 1
+    def set_activation_constant(self, activation_constant):
+        if activation_constant < 0:
+            print "activation constant must be greater than 0"
+        self.activation_constant = activation_constant
 
+    def development(self, n_steps):
+        S = []
+        self.equilibrium_expression_state = []
+        S.append(self.initial_expression_state())
+        for t in range(0,n_steps):
+            S_t = np.dot(self.gene_network, S[t])
+            S_filter = []
+            for x in range(0, len(S_t)):
+                S_filter.append(2/(1+math.exp(-self.activation_constant*S_t[x])) - 1)
+            S.append(S_filter)
+            if t >= n_steps-10:
+                self.equilibrium_expression_state.append(S[t]) #logs last 10 states of S
+
+    def check_equilibrium(self):
+        total_sum = 0
+        for x in range (1,10):
+            sum_single_comparison = sum(np.subtract(self.equilibrium_expression_state[0], self.equilibrium_expression_state[x])**2)/(4*self.n_genes)
+            total_sum = total_sum + sum_single_comparison
+        if total_sum < 0.001:
+            return 0    #stable
+        else:
+            return 1    #unstable -- how do we want these values returned?
+        #math needs to be tested
 
 if __name__ == "__main__":
     import doctest
