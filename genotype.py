@@ -331,7 +331,15 @@ class Genotype(object):
             gene_expression_state.append(filtered_expression_state)
         self.gene_expression_pattern = np.array(gene_expression_state)
 
-        
+    def set_tau(self, tau):
+        '''
+        Sets the value of tau, the number of iterations that are included in calculating the equilibrium steady state
+        '''
+        assert tau > 0
+        assert tau < len(self.gene_expression_pattern)
+        self.tau = tau
+
+    
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
