@@ -346,6 +346,14 @@ class Genotype(object):
         interval_expression_pattern = self.gene_expression_pattern[(len(self.gene_expression_pattern)-self.tau):len(self.gene_expression_pattern)]
         self.average_expression_pattern = np.mean(interval_expression_pattern, axis=0)
 
+    @staticmethod
+    def calculate_equilibrium_steady_state(average_expression_pattern, gene_expression_pattern, n_genes):
+        '''
+        Calculates the value for the equilibrium steady state, to be used to check against the appropriate criterion (i.e. < 10^-3)
+        '''
+        difference_from_average_expression = (np.subtract(average_expression_pattern, gene_expression_pattern)**2)/(4*n_genes)
+        return difference_from_average_expression
+
 
 if __name__ == "__main__":
     import doctest
