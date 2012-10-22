@@ -354,7 +354,21 @@ class Genotype(object):
         difference_from_average_expression = (np.subtract(average_expression_pattern, gene_expression_pattern)**2)/(4*n_genes)
         return difference_from_average_expression
 
+    @property
+    def developmentally_stable(self):
+        '''
+        Checks the equilibrium expression state of the gene network. If the final sum is less than 10-3, it is stable.
+        '''
+        equilibrium_steady_state = []
+        for x in range ((len(self.gene_expression_pattern) - self.tau),len(self.gene_expression_pattern)):
+            equilibrium_steady_state.append(Genotype.calculate_equilibrium_steady_state(self.average_expression_pattern, self.gene_expression_pattern[x], self.n_genes))
 
+        if np.sum(equilibrium_steady_state) < 0.001:
+            return True
+        else:
+            return False
+
+        
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
