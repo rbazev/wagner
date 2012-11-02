@@ -278,21 +278,6 @@ class Genotype(object):
         offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
         return offspring
    
-<<<<<<< HEAD
-    def generate_sexual_offspring(self,genotype2): 
-
-        offspring = copy.deepcopy(self)
-        for x in range(0, n_genes): #iterate through loop * n_genes, ie for each row in the matrix
-            parent = random.random()  #randomly pick which parent will contribute each row of the matrix
-            if parent >= .5:
-                chosen_genotype = self
-            else:
-                chosen_genotype = genotype2
-            row = chosen_genotype[x] #set row x of the parent chosen equal to row
-            offspring[x] = row #add row x of the parent chosen to the offspring's genotype
-        offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
-        return offspring
-=======
     @staticmethod
     def recombine(genotype1,genotype2):
         gene_num = genotype1.n_genes
@@ -324,7 +309,6 @@ class Genotype(object):
         '''
         assert activation_constant > 0
         self.activation_constant = activation_constant
->>>>>>> d748f8d02f3781be92758bf8eb66adb16251190e
 
     @staticmethod
     def sigmoidal_filter_function(activation_constant, current_expression_state_index):
