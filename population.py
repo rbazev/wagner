@@ -30,9 +30,9 @@ class Population(object):
     founder = Genotype.generate_random(Genotype.n_genes, Genotype.connectivity)
     founding_pop.organisms = []
     popsize = 0
-    while organismnum < population_size:
+    while organism_num < population_size:
       founding_pop.organisms.append(founder)
-      organismnum = organismnum + 1
+      organism_num = organism_num + 1
     return founding.pop 
   
   def set_stabilizing_selection(self, stabilizing_selection_strength):
@@ -51,6 +51,36 @@ class Population(object):
       organism = organism + 1
     return new_pop
         
+   def choose_offspring (self):   
+    sumfitness = 0      #sum of the fitnesses of every genotype in pop, to be used as top range for generating rand number
+    for genotype in self.organisms:
+      sumfitness += genotype.fitness     
+    rand = random.randrange(0, sumfitness)
+    total = 0       #will iterate over genotypes, summing fitnesses until reaching random number
+    for genotype in self.organisms:
+        total += Genotype.fitness
+        if total > rand
+          return genotype
     
-  def choose_genotype(self, genotype.fitness)
-    #randomly choose the genotype to replicate, weighted by fitness
+  def get_next_generation_asexual(self):
+    next_generation = Population() 
+    next_generation.population_size = self.population_size
+    next_generation_stabilizing_selection_strength = self.stabilizing_selection_strength
+    next_generation.organisms = []
+    organism_num = 0
+    while organism_num < next_generation.population_size
+      next_generation.organisms.append(self.choose_organism)
+      organism_num = organism_num + 1
+    
+  def get_next_generation_sexual(self):
+    next_generation = Population() 
+    next_generation.population_size = self.population_size
+    next_generation_stabilizing_selection_strength = self.stabilizing_selection_strength
+    next_generation.organisms = []
+    organism_num = 0
+    while organism_num < next_generation.population_size
+      parent1 = self.choose_organism
+      parent2 = self.choose_organism
+      offspring = recombine (parent1, parent2)
+      next_generation.organisms.append(offspring)
+      organism_num = organism_num + 1
