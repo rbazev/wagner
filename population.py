@@ -69,7 +69,9 @@ class Population(object):
     next_generation.organisms = []
     organism_num = 0
     while organism_num < next_generation.population_size
-      next_generation.organisms.append(self.choose_organism)
+      randchoice = self.choose_organism
+      mut_offspring = Genotype.randchoice.mutate_random(rnd.poisson(Genotype.randchoice.mutation_rate))
+      next_generation.organisms.append(mut_offspring)
       organism_num = organism_num + 1
     
   def get_next_generation_sexual(self):
@@ -82,5 +84,6 @@ class Population(object):
       parent1 = self.choose_organism
       parent2 = self.choose_organism
       offspring = recombine (parent1, parent2)
-      next_generation.organisms.append(offspring)
+      mut_offspring = Genotype.rec_offspring.mutate_random(rnd.poisson(Genotype.rec_offspring.mutation_rate))
+      next_generation.organisms.append(mut_offspring)
       organism_num = organism_num + 1
