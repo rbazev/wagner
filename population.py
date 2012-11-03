@@ -21,10 +21,19 @@ __version__ = "0.0.1"
 class Population(object):
     """ 
     A population of gene networks
+    Attributes: population_size
     """
-  
-  def set_population_size(self, population_size):
-    self.population_size = population_size
+  @staticmethod
+  def found_population(population_size):
+    founding_pop = Population()
+    founding_pop.population_size = population_size
+    founder = Genotype.generate_random(Genotype.n_genes, Genotype.connectivity)
+    founding_pop.organisms = []
+    popsize = 0
+    while organismnum < population_size:
+      founding_pop.organisms.append(founder)
+      organismnum = organismnum + 1
+    return founding.pop 
   
   def set_stabilizing_selection(self, stabilizing_selection_strength):
     self.stabilizing_selection_strength = stabilizing_selection_strength
