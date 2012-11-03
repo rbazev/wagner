@@ -294,8 +294,8 @@ class Genotype(object):
         return offspring
     
     def calc_stab_sel_fitness(self, stabilizing_selection_strength):
-        D = calculate_equilibrium_steady_state(average_expression_pattern, gene_expression_pattern, n_genes) #each of these is precalc in development object
-        self.stabilized_fitness = math.log(D/stabilizing_selection_strength)
+        D = Development.calculate_equilibrium_steady_state(Development.average_expression_pattern, Development.gene_expression_pattern, n_genes)
+        self.fitness = math.log(D/stabilizing_selection_strength)
 
     def generate_random_initial_expression_state(self):
         '''
