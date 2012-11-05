@@ -19,10 +19,10 @@ __author__ = 'Ricardo Azevedo, Christina Burch, Kayla Peck, Amanda Whitlock'
 __version__ = "0.0.1"
 
 class Population(object):
-    """ 
-    A population of gene networks
-    Attributes: population_size
-    """
+  """ 
+  A population of gene networks
+  Attributes: population_size
+  """
   @staticmethod
   def found_population(population_size):
     founding_pop = Population()
@@ -51,16 +51,16 @@ class Population(object):
       organism = organism + 1
     return new_pop
         
-   def choose_offspring (self):   
+  def choose_offspring (self):   
     sumfitness = 0      #sum of the fitnesses of every genotype in pop, to be used as top range for generating rand number
     for genotype in self.organisms:
       sumfitness += genotype.fitness     
     rand = random.randrange(0, sumfitness)
     total = 0       #will iterate over genotypes, summing fitnesses until reaching random number
     for genotype in self.organisms:
-        total += Genotype.fitness
-        if total > rand
-          return genotype
+      total += Genotype.fitness
+      if total > rand
+        return genotype
     
   def get_next_generation_asexual(self):
     next_generation = Population() 
@@ -68,7 +68,7 @@ class Population(object):
     next_generation_stabilizing_selection_strength = self.stabilizing_selection_strength
     next_generation.organisms = []
     organism_num = 0
-    while organism_num < next_generation.population_size
+    while organism_num < next_generation.population_size:
       randchoice = self.choose_organism
       mut_offspring = Genotype.randchoice.mutate_random(rnd.poisson(Genotype.randchoice.mutation_rate))
       next_generation.organisms.append(mut_offspring)
@@ -80,7 +80,7 @@ class Population(object):
     next_generation_stabilizing_selection_strength = self.stabilizing_selection_strength
     next_generation.organisms = []
     organism_num = 0
-    while organism_num < next_generation.population_size
+    while organism_num < next_generation.population_size:
       parent1 = self.choose_organism
       parent2 = self.choose_organism
       offspring = recombine (parent1, parent2)
