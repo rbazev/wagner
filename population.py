@@ -34,7 +34,7 @@ class Population(object):
     popsize = 0
     organism_num = 0
     while organism_num < population_size:
-      founding_pop.organisms.append(founder)
+      founding_pop.organisms.append(copy.deepcopy(founder))
       organism_num = organism_num + 1
     return founding_pop 
   
@@ -66,6 +66,7 @@ class Population(object):
       mut_offspring = Genotype.randchoice.mutate_random(rnd.poisson(Genotype.randchoice.mutation_rate))
       next_generation.organisms.append(mut_offspring)
       organism_num = organism_num + 1
+    return next_generation
     
   def get_next_generation_sexual(self):
     next_generation = Population() 
@@ -80,5 +81,6 @@ class Population(object):
       mut_offspring = Genotype.rec_offspring.mutate_random(rnd.poisson(Genotype.rec_offspring.mutation_rate))
       next_generation.organisms.append(mut_offspring)
       organism_num = organism_num + 1
+    return next_generation
         
 
