@@ -25,18 +25,28 @@ class Population(object):
   """
   @staticmethod
   def found_population(population_size, n_genes, connectivity):
-    founding_pop = Population()
-    founding_pop.population_size = population_size
-    Genotype.n_genes = n_genes
-    Genotype.connectivity = connectivity
-    founder = Genotype.generate_random(Genotype.n_genes, Genotype.connectivity)
+    founding_pop = Population()    
     founding_pop.organisms = []
     popsize = 0
     organism_num = 0
     while organism_num < population_size:
-      founding_pop.organisms.append(copy.deepcopy(founder))
+      founding_pop.organisms.append(copy.deepcopy(Genotype.founder))
       organism_num = organism_num + 1
-    return founding_pop 
+    return founding_pop
+
+    @staticmethod
+    def generate_founder:
+      Genotype.n_genes = n_genes
+      Genotype.connectivity = connectivity
+      founder = Genotype.generate_random(Genotype.n_genes, Genotype.connectivity)
+      founder.generate_random_initial_expression_state()
+      founder.set_mutation_rate(mutation_rate)    
+      founder.set_activation_constant(activation_constant)
+      founder.develop(dev_steps)
+      founder.set_tau(tau)
+      founder.developmentally_stable()
+      return founder
+      
   
   def set_stabilizing_selection(self, stabilizing_selection_strength):
     self.stabilizing_selection_strength = stabilizing_selection_strength
