@@ -17,7 +17,7 @@ class Development(object):
     
     def calc_stab_sel_fitness(self, stabilizing_selection_strength):
         D = calculate_equilibrium_steady_state(average_expression_pattern, gene_expression_pattern, Genotype.n_genes) 
-        self.fitness = math.log(D/stabilizing_selection_strength)
+        self.fitness = math.log(D/stabilizing_selection_strength)    
 
     def generate_random_initial_expression_state(self):
         '''
