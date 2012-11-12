@@ -14,8 +14,6 @@ import random
 import networkx as nx
 import math
 
-# CB testing Git push
-
 __author__ = 'Ricardo Azevedo, Christina Burch, Kayla Peck, Amanda Whitlock'
 __version__ = "0.0.1"
 
