@@ -13,16 +13,33 @@ import math
 
 
 class Development(object):
-    
+
+    def __init__(self, activation_constant, development_steps, tau, selection_strength):
+        """
+        Create Development object that specifies environmental/development parameters
+
+        Parameters:
+
+            activation_constant:
+            development_steps:
+            tau:
+            selection_strength:
+        """
+        self.activation_constant = activation_constant
+        self.development_steps = development_steps
+        self.tau = tau
+        self.selection_strength = selection_strength
+
+    def generate_random_initial_expression_state(self,n_genes):
+        '''
+        Generate an initial expression state - an array of size n_genes, filled randomly with 1 or -1
+        '''
+        self.initial_expression_state = np.round(rnd.random(n_genes))*2 - 1
+
     def calc_stab_sel_fitness(self, stabilizing_selection_strength):
         D = calculate_equilibrium_steady_state(average_expression_pattern, gene_expression_pattern, Genotype.n_genes) 
         self.fitness = math.log(D/stabilizing_selection_strength)    
 
-    def generate_random_initial_expression_state(self):
-        '''
-        Generate an initial expression state - an array of size n_genes, filled randomly with 1 or -1
-        '''
-        self.initial_expression_state = np.round(rnd.random(self.n_genes))*2 - 1
 
     def set_activation_constant(self, activation_constant):
         '''
