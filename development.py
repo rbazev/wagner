@@ -10,8 +10,7 @@ import random
 #import pygraphviz as pgv
 import networkx as nx
 import math
-import genotype
-import population
+
 
 class Development(object):
     
