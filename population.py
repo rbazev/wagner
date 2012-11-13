@@ -36,13 +36,11 @@ class Population(object):
         self.population_size = population_size
 
     @staticmethod
-    def found_population(population_size):
-        founding_pop = Population()
-        founding_pop.population_size = population_size
-        founding_pop.organisms = []
-        while len(founding_pop.organisms) < population_size:
-            founding_pop.organisms.append(copy.deepcopy(founder))
-        return founding_pop
+    def found_clonal_population(founder,population_size):
+        new_population = Population()
+        while new_population.population_size < population_size:
+            new_population.organisms.append(copy.deepcopy(founder))
+        return new_population
 
     @staticmethod
     def generate_founder(n_genes, connectivity, mutation_rate):
