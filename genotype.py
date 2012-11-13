@@ -294,7 +294,7 @@ class Genotype(object):
         return offspring
 
     def calculate_fitness(self, population_object):
-        D = calculate_equilibrium_steady_state(self.average_expression_pattern, self.gene_expression_pattern, self.n_genes) #each of these is precalc in development object
+        D = self.developmentally_stable(population_object)
         self.fitness = math.log(D/population_object.selection_strength)
 
     def generate_random_initial_expression_state(self):
@@ -335,35 +335,34 @@ class Genotype(object):
         assert tau < len(self.gene_expression_pattern)
         self.tau = tau
 
-    def average_expression_pattern(self):
+    def average_expression_pattern(self,population_object):
         '''
         Calculates the average expression pattern from the last tau expression states
         '''
-        interval_expression_pattern = self.gene_expression_pattern[(len(self.gene_expression_pattern)-self.tau):len(self.gene_expression_pattern)]
+        interval_expression_pattern = self.gene_expression_pattern[(len(self.gene_expression_pattern)-population_object.tau):len(self.gene_expression_pattern)]
         self.average_expression_pattern = np.mean(interval_expression_pattern, axis=0)
 
     @staticmethod
-    def calculate_equilibrium_steady_state(average_expression_pattern, gene_expression_pattern, n_genes):
+    def calculate_difference_from_average_expression(average_expression_pattern,gene_expression_state,n_genes):
         '''
         Calculates the value for the equilibrium steady state, to be used to check against the appropriate criterion (i.e. < 10^-3)
         '''
-        difference_from_average_expression = (np.subtract(average_expression_pattern, gene_expression_pattern)**2)/(4*n_genes)
+        difference_from_average_expression = (np.subtract(average_expression_pattern, gene_expression_state)**2)/(4*n_genes)
         return difference_from_average_expression
 
-    @property
-    def developmentally_stable(self):
+    def developmentally_stable(self,population_object):
         '''
         Checks the equilibrium expression state of the gene network. If the final sum is less than 10-3, it is stable.
         '''
         equilibrium_steady_state = []
-        for x in range ((len(self.gene_expression_pattern) - self.tau),len(self.gene_expression_pattern)):
-            equilibrium_steady_state.append(Genotype.calculate_equilibrium_steady_state(self.average_expression_pattern, self.gene_expression_pattern[x], self.n_genes))
+        for x in range ((len(self.gene_expression_pattern) - population_object.tau),len(self.gene_expression_pattern)):
+            equilibrium_steady_state.append(Genotype.calculate_difference_from_average_expression(self.average_expression_pattern, self.gene_expression_pattern[x], self.n_genes))
 
-        if np.sum(equilibrium_steady_state) < 0.001:
-            return True
-        else:
-            return False
-
+        #if np.sum(equilibrium_steady_state) < 0.001:
+        #    return True
+        #else:
+        #    return False
+        return np.sum(equilibrium_steady_state)
 
 if __name__ == "__main__":
     import doctest
