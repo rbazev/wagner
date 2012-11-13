@@ -27,6 +27,10 @@ class Population(object):
     """
     def __init__(self):
         self.organisms = []
+        self.activation_constant = 1
+        self.development_steps = 100
+        self.tau = 10
+        self.selection_strength = 100
 
     @property
     def population_size(self):
@@ -39,7 +43,7 @@ class Population(object):
         10
         """
         return len(self.organisms)
-        
+
     def set_population_size(self, population_size):
         self.population_size = population_size
 
@@ -83,7 +87,7 @@ class Population(object):
         founder.set_mutation_rate(mutation_rate)
         return founder
     
-    def get_fitness (self):
+    def get_fitness(self):
         self.all_fitness = []
         for i in range(len(founding_pop.organisms)):
             self.all_fitness.append(self.organisms[i].fitness) 
