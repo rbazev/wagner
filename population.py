@@ -44,6 +44,13 @@ class Population(object):
         """
         return len(self.organisms)
 
+    def set_activation_constant(self, activation_constant):
+        '''
+        Sets the activation constant and makes sure it is non-negative
+        '''
+        assert activation_constant > 0
+        self.activation_constant = activation_constant
+
     def set_population_size(self, population_size):
         self.population_size = population_size
 
