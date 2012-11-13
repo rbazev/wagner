@@ -44,15 +44,8 @@ class Population(object):
 
     @staticmethod
     def generate_founder(n_genes, connectivity, mutation_rate):
-#        Genotype.n_genes = n_genes
-#        Genotype.connectivity = connectivity
-         founder = Genotype.generate_random(n_genes, connectivity)
-#        founder.generate_random_initial_expression_state()
+         founder = genotype.Genotype.generate_random(n_genes, connectivity)
          founder.set_mutation_rate(mutation_rate)
-#        founder.set_activation_constant(activation_constant)
-#        founder.develop(dev_steps)
-#        founder.set_tau(tau)
-#        founder.developmentally_stable()
          return founder
     
     def get_fitness (self):
