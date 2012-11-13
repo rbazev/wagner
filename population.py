@@ -30,6 +30,14 @@ class Population(object):
 
     @property
     def population_size(self):
+        """
+        Number of individual genotypes in the population.
+
+        >>> founder = population.Population.generate_founder(5,.2,1)
+        >>> g0 = population.Population.found_clonal_population(founder,10)
+        >>> g0.population_size
+        10
+        """
         return len(self.organisms)
         
     def set_population_size(self, population_size):
@@ -37,6 +45,20 @@ class Population(object):
 
     @staticmethod
     def found_clonal_population(founder,population_size):
+        """
+        Make a population by copying a founder genotype into a list population_size times.
+
+        >>> founder = population.Population.generate_founder(5,.2,1)
+        >>> g0 = population.Population.found_clonal_population(founder,10)
+        >>> g0
+        <population.Population at 0x344fb30>
+        >>> g0.organisms[2].gene_network
+        array([[ 0.48238438,  0.        ,  0.        ,  0.08485553,  0.49141507],
+        [-0.79636121,  0.        ,  0.        ,  0.        ,  0.        ],
+        [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ],
+        [ 0.        ,  0.        ,  0.        ,  0.        , -0.88783723],
+        [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ]])
+        """
         new_population = Population()
         while new_population.population_size < population_size:
             new_population.organisms.append(copy.deepcopy(founder))
@@ -44,9 +66,22 @@ class Population(object):
 
     @staticmethod
     def generate_founder(n_genes, connectivity, mutation_rate):
-         founder = genotype.Genotype.generate_random(n_genes, connectivity)
-         founder.set_mutation_rate(mutation_rate)
-         return founder
+        """
+        Generate a founder consisting of a gene network with random interaction strengths and a mutation rate.
+
+        >>> founder = population.Population.generate_founder(5,.2,1)
+        >>> founder.gene_network
+        array([[ 0.48238438,  0.        ,  0.        ,  0.08485553,  0.49141507],
+        [-0.79636121,  0.        ,  0.        ,  0.        ,  0.        ],
+        [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ],
+        [ 0.        ,  0.        ,  0.        ,  0.        , -0.88783723],
+        [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ]])
+        >>> founder.mutation_rate
+        1
+        """
+        founder = genotype.Genotype.generate_random(n_genes, connectivity)
+        founder.set_mutation_rate(mutation_rate)
+        return founder
     
     def get_fitness (self):
         self.all_fitness = []
