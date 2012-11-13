@@ -311,7 +311,7 @@ class Genotype(object):
         '''
         return (2/(1+math.exp(-activation_constant*current_expression_state_index)) - 1)
 
-    def develop(self, n_steps):
+    def develop(self, population_object):
         '''
         Simulates development - multiplies gene network R by initial expresssion state S(0) for n_steps number of times
         For each product, it is passed through the sigmoidal filter function (see supplementary information for 2006 paper)
@@ -319,11 +319,11 @@ class Genotype(object):
         '''
         gene_expression_state = []
         gene_expression_state.append(self.initial_expression_state)
-        for t in range(0,n_steps):
+        for t in range(0,population_object.n_steps):
             current_expression_state = np.dot(self.gene_network, gene_expression_state[t])
             filtered_expression_state = []
             for x in range(0, self.n_genes):
-                filtered_expression_state.append(Genotype.sigmoidal_filter_function(self.activation_constant,current_expression_state[x]))
+                filtered_expression_state.append(Genotype.sigmoidal_filter_function(population_object.activation_constant,current_expression_state[x]))
             gene_expression_state.append(filtered_expression_state)
         self.gene_expression_pattern = np.array(gene_expression_state)
 
