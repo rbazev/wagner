@@ -27,8 +27,8 @@ class Population(object):
     """
     def __init__(self):
         self.organisms = []
-        self.activation_constant = 1
-        self.n_steps = 5
+        self.activation_constant = 100
+        self.n_steps = 100
         self.tau = 10
         self.selection_strength = 100
 
