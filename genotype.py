@@ -321,12 +321,12 @@ class Genotype(object):
         self.average_expression_pattern = np.mean(interval_expression_pattern, axis=0)
 
     @staticmethod
-    def calculate_difference_from_average_expression(average_expression_pattern,gene_expression_state,n_genes):
+    def calculate_difference_from_specified_expression(specified_expression_pattern,gene_expression_state,n_genes):
         '''
         Calculates the value for the equilibrium steady state, to be used to check against the appropriate criterion (i.e. < 10^-3)
         '''
-        difference_from_average_expression = (np.subtract(average_expression_pattern, gene_expression_state)**2)/(4*n_genes)
-        return difference_from_average_expression
+        difference_from_specified_expression = (np.subtract(specified_expression_pattern, gene_expression_state)**2)/(4*n_genes)
+        return difference_from_specified_expression
 
     def developmentally_stable(self,population_object):
         '''
@@ -334,7 +334,7 @@ class Genotype(object):
         '''
         equilibrium_steady_state = []
         for x in range ((len(self.gene_expression_pattern) - population_object.tau),len(self.gene_expression_pattern)):
-            equilibrium_steady_state.append(Genotype.calculate_difference_from_average_expression(self.average_expression_pattern, self.gene_expression_pattern[x], self.n_genes))
+            equilibrium_steady_state.append(Genotype.calculate_difference_from_specified_expression(self.average_expression_pattern, self.gene_expression_pattern[x], self.n_genes))
 
         #if np.sum(equilibrium_steady_state) < 0.001:
         #    return True
