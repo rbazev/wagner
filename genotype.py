@@ -278,21 +278,6 @@ class Genotype(object):
         offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
         return offspring
 
-    @staticmethod
-    def recombine(genotype1,genotype2):
-        gene_num = genotype1.n_genes
-        newmatrix = np.zeros((gene_num, gene_num))
-        for x in range(0, gene_num): #iterate through loop * n_genes, ie for each row in the matrix
-            parent = random.random()  #randomly pick which parent will contribute each row of the matrix
-            if parent >= .5:
-                chosen_genotype = genotype1
-            else:
-                chosen_genotype = genotype2
-            row = chosen_genotype.gene_network[x] #set row x of the parent chosen equal to row
-            newmatrix[x] = row #add row x of the parent chosen to the offspring's genotype
-        offspring = Genotype(newmatrix)
-        return offspring
-
     def calculate_fitness(self, population_object):
         D = self.developmentally_stable(population_object)
         self.fitness = math.log(D/population_object.selection_strength)
@@ -327,13 +312,6 @@ class Genotype(object):
             gene_expression_state.append(filtered_expression_state)
         self.gene_expression_pattern = np.array(gene_expression_state)
 
-    def set_tau(self, tau):
-        '''
-        Sets the value of tau, the number of iterations that are included in calculating the equilibrium steady state
-        '''
-        assert tau > 0
-        assert tau < len(self.gene_expression_pattern)
-        self.tau = tau
 
     def average_expression_pattern(self,population_object):
         '''
