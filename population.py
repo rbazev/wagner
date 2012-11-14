@@ -13,7 +13,7 @@ import random
 #import pygraphviz as pgv
 import networkx as nx
 import math
-import genotype
+from genotype import Genotype
 import development
 
 
@@ -50,10 +50,25 @@ class Population(object):
         '''
         assert activation_constant > 0
         self.activation_constant = activation_constant
+    
+    def set_n_steps (self, n_steps):
+        self.n_steps = n_steps
+
+
+    def set_tau(self, tau):
+        '''
+        Sets the value of tau, the number of iterations that are included in calculating the equilibrium steady state
+        '''
+        assert tau > 0
+        assert tau < len(self.gene_expression_pattern)
+        self.tau = tau       
 
     def set_population_size(self, population_size):
         self.population_size = population_size
 
+    def set_selection_strength (self, selection_strength):
+        self.selection_strength = selection_strength
+        
     @staticmethod
     def found_clonal_population(founder,population_size):
         """
@@ -90,32 +105,47 @@ class Population(object):
         >>> founder.mutation_rate
         1
         """
-        founder = genotype.Genotype.generate_random(n_genes, connectivity)
+        #founder = genotype.Genotype.generate_random(n_genes, connectivity)
+        founder = Genotype.generate_random(n_genes, connectivity)
         founder.set_mutation_rate(mutation_rate)
         return founder
     
     def get_fitness(self):
+        '''
+        Create a vector of the fitness of each genotype in the population and make it an attribute of the population
+        '''
         self.all_fitness = []
-        for i in range(len(founding_pop.organisms)):
+        for i in range(len(self.organisms)):
             self.all_fitness.append(self.organisms[i].fitness) 
             
+#    @staticmethod
+#    def recombine (genotype1, genotype2):
+#        newmatrix = np.zeros((genotype1.n_genes, genotype1.n_genes)) 
+#        for x in range (0, genotype1.n_genes):        
+#            if random.random() >= .5:  
+#                newmatrix[x] = genotype1.gene_network[x]
+#            else:
+#                newmatrix[x] = genotype2.gene_network[x]
+#        return Genotype(newmatrix) 
+
     @staticmethod
-    def recombine(genotype1,genotype2):
-        gene_num = genotype1.n_genes
-        newmatrix = np.zeros((gene_num, gene_num)) 
-        for x in range(0, gene_num): #iterate through loop * n_genes, ie for each row in the matrix
-            parent = random.random()  #randomly pick which parent will contribute each row of the matrix
-            if parent >= .5:
-                chosen_genotype = genotype1
+    def recombine (genotype1, genotype2):
+        '''
+        Randomly recombines gene network rows of two parent genotypes
+        '''
+        offspring = copy.deepcopy(genotype1)
+        for x in range (0, genotype1.n_genes):        
+            if random.random() >= .5:  
+                offspring.gene_network[x] = genotype2.gene_network[x]
             else:
-                chosen_genotype = genotype2
-            row = chosen_genotype.gene_network[x] #set row x of the parent chosen equal to row
-            newmatrix[x] = row #add row x of the parent chosen to the offspring's genotype
-        offspring = Genotype(newmatrix)
-        return offspring    
-            
-                
-    def choose_genotype(self):
+                continue
+        return offspring 
+    
+                        
+    def choose_genotype(self): 
+        '''
+        Generates all offspring for the next generation, randomly, weighted by fitness
+        '''
         cum_fitness = np.cumsum(self.all_fitness)
         rand_array = rnd.random_sample(self.population_size)
         mult_rand_array = np.multiply(rand_array, cum_fitness[self.population_size-1])
@@ -125,42 +155,32 @@ class Population(object):
             chosen_genotypes.append(self.organisms[indices[i]])
         return chosen_genotypes
         
-        
-    def sexually_reproduce_pop (self):
+
+    def asexually_reproduce_pop (self):
+        '''
+        Asexually reproduces the population with a probability of mutations
+        '''
         new_pop = Population()
-        new_pop.offspring = []
-        while len(new_pop.offspring) < self.population_size:
-            genotype1 = choose_genotype #choose_genotype is the random-weighted selection method
-            genotype2 = choose_genotype
-            rec_offspring = recombine(genotype1, genotype2)
-            mut_offspring = rec_offspring.mutate_random(rnd.poisson(rec_offspring.mutation_rate))
-            new_pop.append(mut_offspring)
+        new_pop.organisms = Population.choose_genotype(self)
+        for i in range(len(new_pop.organisms)):
+            new_pop.organisms[i].mutate_random(rnd.poisson(new_pop.organisms[i].mutation_rate))
         return new_pop
-                
-    
-    def asexually_reproduce_pop (self): 
-        self.organsisms = [] #this will make it faster but is there ever a time when we will want to preserve the population?
-        new_pop = copy.deepcopy(self)
-        chosen_genotypes = choose_genotype(self)
-        for i in range(len(chosen_genotypes)):
-            mut_offspring = chosen_genotypes[i].mutate_random(rnd.poisson(Genotype.chosen_genotypes[i].mutation_rate)) 
-            new_pop.organisms(append.mut_offspring)
-        return new_pop
-        
+            
+       
        
     def sexually_reproduce_pop (self): 
-        self.organsisms = [] #this will make it faster but is there ever a time when we will want to preserve the population?
-        new_pop = copy.deepcopy(self)
-        chosen_genotypes1 = choose_genotype(self)
-        chosen_genotypes2 = choose_genotype(self)
-        recombined_offspring = []
-        for i in range(len(chosen_genotypes1)):
-            rec_offsping = recombine(chosen_genotype1[i], chosen_genotype2[i])
-            recombined_offspring.append.rec_offspring
-        for i in range(len(chosen_genotypes2)):
-            mut_offspring = recombined_offspring[i].mutate_random(rnd.poisson(Genotype.mut_offspring[i].mutation_rate))
-            new_pop.organisms.append.mut_offspring
+        '''
+        Sexually reproduces the population, choosing 2*population parents, recombining their gene networks, and mutating the product
+        '''
+        new_pop = Population()
+        parents1 = Population.choose_genotype(self)
+        parents2 = Population.choose_genotype(self)
+        for i in range(len(parents1)):
+            recombined = Population.recombine(parents1[i], parents2[i])
+            recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
+            new_pop.organisms.append(recombined)
         return new_pop
+            
         
 
     
