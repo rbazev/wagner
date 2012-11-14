@@ -3,13 +3,14 @@ Last updated by KP on 9.18.12
 
 Contents:
 1. Tips and tricks for using PyCharm
-2. Tips and tricks for using iPython
+2. Tips and tricks for using iPython notebook
 3. General Python tips
 4. Using GitHub
 
 
-
+------------
 1. PyCharm
+------------
 
 Accessing/committing project code
     -To check out the code from github, go to the VCS menu and click on "Checkout from version control"
@@ -19,15 +20,40 @@ Accessing/committing project code
 Using PyCharm features
     -To examine the structure of the code, click on 7:Structure in the bottom left hand margin
     -To comment out a section, highlight lines and push Ctrl+backslash
+    -To rename an attribute/method throughout the entire code, choose the "Refactor" menu and then click "Rename"
 
 
+-------------------
 2. iPython notebook
+-------------------
+
+Running iPython
+    -To run iPython notebook, use the command line to navigate to the folder with the correct files, then type: ipython notebook --pylab inline
+
+Using iPython
+    -To implement code in ipython notebook, type
+        import genotype
+      OR
+        run genotype.py
+      The difference here is that if you use import genotype, to create a genotype object, you must type
+      genotype.Genotype.generate_random(), whereas if you run genotype.py, you can just type Genotype.generate_random()
+    -After making changes to a file (e.g. genotype.py), if you run the file again and the changes still do not show up,
+     restart the kernel by clicking on "Restart" in the side bar menu
 
 
+-----------------------
 3. General Python Tips
+-----------------------
+
+When to use @property
+    -This should be included for attributes that are calculated rather than set
+When to use @staticmethod
+    -This should be used when self is not an argument of the method.
 
 
-4. Using GitHub
+-----------------
+4. GitHub
+-----------------
 
 Branching
     Open the command line (git shell or git bash for windows)
