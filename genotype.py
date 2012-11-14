@@ -279,12 +279,15 @@ class Genotype(object):
         return offspring
 
     def calculate_fitness(self, population_object):
+        """
+        Calculates the fitness of a gene network using D (which is a measure of the networks stability)
+        """
         D = self.developmentally_stable(population_object)
         self.fitness = math.log(D/population_object.selection_strength)
 
     def generate_random_initial_expression_state(self):
         '''
-        Generate an initial expression state - an array of size n_genes, filled randomly with 1 or -1
+        Generates an initial expression state - an array of size n_genes, filled randomly with 1 or -1
         '''
         self.initial_expression_state = np.round(rnd.random(self.n_genes))*2 - 1
 
@@ -300,7 +303,7 @@ class Genotype(object):
         '''
         Simulates development - multiplies gene network R by initial expresssion state S(0) for n_steps number of times
         For each product, it is passed through the sigmoidal filter function (see supplementary information for 2006 paper)
-        which then acts as S(t). The last 10 S states are assigned to the equilibrium expression state variable to be checked for stability.
+        which then acts as S(t). Output is the entire gene expression state as an array.
         '''
         gene_expression_state = []
         gene_expression_state.append(self.initial_expression_state)
@@ -323,20 +326,20 @@ class Genotype(object):
     @staticmethod
     def calculate_difference_from_specified_expression(specified_expression_pattern,gene_expression_state,n_genes):
         '''
-        Calculates the value for the equilibrium steady state, to be used to check against the appropriate criterion (i.e. < 10^-3)
+        Calculates the difference between a specified expression pattern and an individual expression state from the gene network
         '''
         difference_from_specified_expression = (np.subtract(specified_expression_pattern, gene_expression_state)**2)/(4*n_genes)
         return difference_from_specified_expression
 
     def developmentally_stable(self,population_object):
         '''
-        Checks the equilibrium expression state of the gene network. If the final sum is less than 10-3, it is stable.
+        Calculates D for the equilibrium expression state of the gene network. If the final sum is less than 10-3/tau, the gene network is stable.
         '''
         equilibrium_steady_state = []
         for x in range ((len(self.gene_expression_pattern) - population_object.tau),len(self.gene_expression_pattern)):
             equilibrium_steady_state.append(Genotype.calculate_difference_from_specified_expression(self.average_expression_pattern, self.gene_expression_pattern[x], self.n_genes))
 
-        #if np.sum(equilibrium_steady_state) < 0.001:
+        #if np.sum(equilibrium_steady_state) < 0.001/population_object.tau:
         #    return True
         #else:
         #    return False
