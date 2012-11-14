@@ -5,6 +5,7 @@ Contents:
 1. Tips and tricks for using PyCharm
 2. Tips and tricks for using iPython
 3. General Python tips
+4. Using GitHub
 
 
 
@@ -21,5 +22,33 @@ Using PyCharm features
 
 
 2. iPython notebook
+
+
+3. General Python Tips
+
+
+4. Using GitHub
+
+Branching
+    Open the command line (git shell or git bash for windows)
+    Make sure everything is up to date
+        $ git pull
+    Create a new branch to work on a portion of the code (e.g. stats)
+        $ git checkout -b stats
+    Make some changes, test them separately, then commit (adding a detailed comment - commit after each change!)
+        $ git add genotype.py
+        $ git commit -m 'new two_step_run() method to replace short_run() and long_run()'
+    Make more changes (note that this makes it very easy to commit every few changes, and give a decent idea of what the commits are about).
+        $ git add genotype.py
+        $ git commit -m 'new scan_r() method'
+    After completing changes, return to master and merge the changes from stats branch into it.
+        $ git checkout master
+        $ git merge stats
+    Then push things back into the repository.
+        $ git push
+    Finally, delete the branch you were working on
+        $ git branch -d stats
+
+
 
 
