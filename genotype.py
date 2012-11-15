@@ -167,6 +167,29 @@ class Genotype(object):
         """
         return len(self.connected_components) == 1
 
+    def set_selection_strength (self, selection_strength):
+        self.selection_strength = selection_strength
+
+
+    def set_activation_constant(self, activation_constant):
+        '''
+        Sets the activation constant and makes sure it is non-negative
+        '''
+        assert activation_constant > 0
+        self.activation_constant = activation_constant
+    
+    def set_n_steps (self, n_steps):
+        self.n_steps = n_steps
+
+
+    def set_tau(self, tau):
+        '''
+        Sets the value of tau, the number of iterations that are included in calculating the equilibrium steady state
+        '''
+        assert tau > 0
+        assert tau < len(self.gene_expression_pattern)
+        self.tau = tau 
+        
     def draw_graph(self):
         """
         Draw gene network using matplotlib.
