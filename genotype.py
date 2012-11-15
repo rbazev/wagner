@@ -253,7 +253,7 @@ class Genotype(object):
         for i in range(n_mutations):
             interaction = self.interactions[mut_interactions[i]]
             self.mutate(interaction[0], interaction[1], new_strengths[i])
-
+ 
     def set_mutation_rate(self, mutation_rate):
         """
         Set mutation rate per genome per generation, that is, the expected number of mutations per generation.
