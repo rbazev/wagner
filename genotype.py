@@ -53,6 +53,11 @@ class Genotype(object):
         assert type(matrix) is np.ndarray
         assert matrix.shape[0] == matrix.shape[1]
         self.gene_network = matrix
+        self.activation_constant = 100
+        self.n_steps = 100
+        self.tau = 10
+        self.selection_strength = 100
+        self.mutation_rate = 1.0
 
     @property
     def n_genes(self):
@@ -277,13 +282,10 @@ class Genotype(object):
         offspring = copy.deepcopy(self)
         offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
         return offspring
-
-    def calculate_fitness(self, population_object):
-        """
-        Calculates the fitness of a gene network using D (which is a measure of the networks stability)
-        """
-        D = self.developmentally_stable(population_object)
-        self.fitness = math.log(D/population_object.selection_strength)
+    
+    def calculate_fitness(self)
+        D = self.developmentally_stable(self.tau)
+        self.fitness = math.log(D/self.selection_strength)
 
     def generate_random_initial_expression_state(self):
         '''
@@ -299,7 +301,7 @@ class Genotype(object):
         '''
         return (2/(1+math.exp(-activation_constant*current_expression_state_index)) - 1)
 
-    def develop(self, population_object):
+    def develop(self):
         '''
         Simulates development - multiplies gene network R by initial expresssion state S(0) for n_steps number of times
         For each product, it is passed through the sigmoidal filter function (see supplementary information for 2006 paper)
@@ -307,20 +309,20 @@ class Genotype(object):
         '''
         gene_expression_state = []
         gene_expression_state.append(self.initial_expression_state)
-        for t in range(0,population_object.n_steps):
+        for t in range(0, self.n_steps):
             current_expression_state = np.dot(self.gene_network, gene_expression_state[t])
             filtered_expression_state = []
             for x in range(0, self.n_genes):
-                filtered_expression_state.append(Genotype.sigmoidal_filter_function(population_object.activation_constant,current_expression_state[x]))
+                filtered_expression_state.append(Genotype.sigmoidal_filter_function(self.activation_constant,current_expression_state[x]))
             gene_expression_state.append(filtered_expression_state)
         self.gene_expression_pattern = np.array(gene_expression_state)
 
 
-    def average_expression_pattern(self,population_object):
+    def average_expression_pattern(self):
         '''
         Calculates the average expression pattern from the last tau expression states
         '''
-        interval_expression_pattern = self.gene_expression_pattern[(len(self.gene_expression_pattern)-population_object.tau):len(self.gene_expression_pattern)]
+        interval_expression_pattern = self.gene_expression_pattern[(len(self.gene_expression_pattern)-self.tau):len(self.gene_expression_pattern)]
         self.average_expression_pattern = np.mean(interval_expression_pattern, axis=0)
 
     @staticmethod
@@ -331,15 +333,15 @@ class Genotype(object):
         difference_from_specified_expression = (np.subtract(specified_expression_pattern, gene_expression_state)**2)/(4*n_genes)
         return difference_from_specified_expression
 
-    def developmentally_stable(self,population_object):
+    def developmentally_stable(self):
         '''
         Calculates D for the equilibrium expression state of the gene network. If the final sum is less than 10-3/tau, the gene network is stable.
         '''
         equilibrium_steady_state = []
-        for x in range ((len(self.gene_expression_pattern) - population_object.tau),len(self.gene_expression_pattern)):
+        for x in range ((len(self.gene_expression_pattern) - self.tau),len(self.gene_expression_pattern)):
             equilibrium_steady_state.append(Genotype.calculate_difference_from_specified_expression(self.average_expression_pattern, self.gene_expression_pattern[x], self.n_genes))
 
-        #if np.sum(equilibrium_steady_state) < 0.001/population_object.tau:
+        #if np.sum(equilibrium_steady_state) < 0.001/self.tau:
         #    return True
         #else:
         #    return False
