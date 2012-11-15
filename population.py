@@ -25,7 +25,7 @@ class Population(object):
     A population of gene networks
     Attributes: population_size
     """
-    def __init__(self):
+    def __init__(self): 
         self.organisms = []
 
     @property
@@ -38,32 +38,10 @@ class Population(object):
         >>> g0.population_size
         10
         """
-        return len(self.organisms)
-
-    def set_activation_constant(self, activation_constant):
-        '''
-        Sets the activation constant and makes sure it is non-negative
-        '''
-        assert activation_constant > 0
-        self.activation_constant = activation_constant
-    
-    def set_n_steps (self, n_steps):
-        self.n_steps = n_steps
-
-
-    def set_tau(self, tau):
-        '''
-        Sets the value of tau, the number of iterations that are included in calculating the equilibrium steady state
-        '''
-        assert tau > 0
-        assert tau < len(self.gene_expression_pattern)
-        self.tau = tau       
+        return len(self.organisms)      
 
     def set_population_size(self, population_size):
         self.population_size = population_size
-
-    def set_selection_strength (self, selection_strength):
-        self.selection_strength = selection_strength
         
     @staticmethod
     def found_clonal_population(founder,population_size):
