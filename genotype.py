@@ -13,6 +13,7 @@ import random
 #import pygraphviz as pgv
 import networkx as nx
 import math
+import population as Population
 
 
 __author__ = 'Ricardo Azevedo, Christina Burch, Kayla Peck, Amanda Whitlock'
@@ -305,7 +306,20 @@ class Genotype(object):
         offspring = copy.deepcopy(self)
         offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
         return offspring
-    
+        
+    @staticmethod
+    def recombine (genotype1, genotype2):
+        '''
+        Randomly recombines gene network rows of two parent genotypes
+        '''
+        offspring = copy.deepcopy(genotype1)
+        for x in range (0, genotype1.n_genes):        
+            if random.random() >= .5:  
+                offspring.gene_network[x] = genotype2.gene_network[x]
+            else:
+                continue
+        return offspring 
+        
     def calculate_fitness(self):
         D = self.developmentally_stable()
         self.fitness = math.exp(-D/self.selection_strength)
