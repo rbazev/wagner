@@ -13,7 +13,7 @@ import random
 #import pygraphviz as pgv
 import networkx as nx
 import math
-from genotype import Genotype
+import genotype
 import development
 
 
@@ -69,26 +69,26 @@ class Population(object):
         """
         Generate a founder consisting of a gene network with random interaction strengths and a mutation rate.
 
-        >>> founder = population.Population.generate_founder(5,.2,1)
+        >>> founder = population.Population.generate_founder(5,.2)
         >>> founder.gene_network
         array([[ 0.48238438,  0.        ,  0.        ,  0.08485553,  0.49141507],
         [-0.79636121,  0.        ,  0.        ,  0.        ,  0.        ],
         [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ],
         [ 0.        ,  0.        ,  0.        ,  0.        , -0.88783723],
         [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ]])
-        >>> founder.mutation_rate
-        1
         """
-        #founder = genotype.Genotype.generate_random(n_genes, connectivity)
-        founder = Genotype.generate_random(n_genes, connectivity)
+        founder = genotype.Genotype.generate_random(n_genes, connectivity)
+        founder.generate_random_initial_expression_state()
         return founder
     
     def get_population_fitness(self):
         '''
-        Create a vector of the fitness of each genotype in the population and make it an attribute of the population
+        Calculate fitness of each genotype, create a vector of each genotype's fitness in the population and make it an attribute of the population
         '''
         self.all_fitness = []
         for i in range(len(self.organisms)):
+            self.organisms[i].develop()
+            self.organisms[i].calculate_fitness()
             self.all_fitness.append(self.organisms[i].fitness) 
             
 #    @staticmethod
