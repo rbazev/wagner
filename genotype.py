@@ -13,7 +13,7 @@ import random
 #import pygraphviz as pgv
 import networkx as nx
 import math
-import population as Population
+import population
 
 
 __author__ = 'Ricardo Azevedo, Christina Burch, Kayla Peck, Amanda Whitlock'
