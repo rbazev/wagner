@@ -306,7 +306,7 @@ class Genotype(object):
         offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
         return offspring
     
-    def calculate_fitness(self)
+    def calculate_fitness(self):
         D = self.developmentally_stable(self.tau)
         self.fitness = math.log(D/self.selection_strength)
 
