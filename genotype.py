@@ -308,7 +308,7 @@ class Genotype(object):
     
     def calculate_fitness(self):
         D = self.developmentally_stable()
-        self.fitness = math.log(D/self.selection_strength)
+        self.fitness = math.exp(-D/self.selection_strength)
 
     def generate_random_initial_expression_state(self):
         '''
