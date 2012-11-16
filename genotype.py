@@ -307,7 +307,7 @@ class Genotype(object):
         return offspring
     
     def calculate_fitness(self):
-        D = self.developmentally_stable(self.tau)
+        D = self.developmentally_stable()
         self.fitness = math.log(D/self.selection_strength)
 
     def generate_random_initial_expression_state(self):
@@ -364,10 +364,6 @@ class Genotype(object):
         for x in range ((len(self.gene_expression_pattern) - self.tau),len(self.gene_expression_pattern)):
             equilibrium_steady_state.append(Genotype.calculate_difference_from_specified_expression(self.average_expression_pattern, self.gene_expression_pattern[x], self.n_genes))
 
-        #if np.sum(equilibrium_steady_state) < 0.001/self.tau:
-        #    return True
-        #else:
-        #    return False
         return np.sum(equilibrium_steady_state)
 
 if __name__ == "__main__":
