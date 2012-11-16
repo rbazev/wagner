@@ -136,7 +136,7 @@ class Population(object):
         parents1 = Population.choose_genotype(self)
         parents2 = Population.choose_genotype(self)
         for i in range(len(parents1)):
-            recombined = Genotype.recombine(parents1[i], parents2[i])
+            recombined = genotype.Genotype.recombine(parents1[i], parents2[i])
             recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
             new_pop.organisms.append(recombined)
         return new_pop
