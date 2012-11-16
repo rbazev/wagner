@@ -305,10 +305,6 @@ class Genotype(object):
         offspring = copy.deepcopy(self)
         offspring.mutate_random(rnd.poisson(offspring.mutation_rate))
         return offspring
-    
-    def calculate_fitness(self):
-        D = self.developmentally_stable()
-        self.fitness = math.log(D/self.selection_strength)
 
     def generate_random_initial_expression_state(self):
         '''
@@ -340,13 +336,13 @@ class Genotype(object):
             gene_expression_state.append(filtered_expression_state)
         self.gene_expression_pattern = np.array(gene_expression_state)
 
-
+    @property
     def average_expression_pattern(self):
         '''
         Calculates the average expression pattern from the last tau expression states
         '''
-        interval_expression_pattern = self.gene_expression_pattern[(len(self.gene_expression_pattern)-self.tau):len(self.gene_expression_pattern)]
-        self.average_expression_pattern = np.mean(interval_expression_pattern, axis=0)
+        interval_expression_pattern = self.gene_expression_pattern[self.n_steps-self.tau:self.n_steps]
+        return np.mean(interval_expression_pattern, axis=0)
 
     @staticmethod
     def calculate_difference_from_specified_expression(specified_expression_pattern,gene_expression_state,n_genes):
@@ -365,6 +361,11 @@ class Genotype(object):
             equilibrium_steady_state.append(Genotype.calculate_difference_from_specified_expression(self.average_expression_pattern, self.gene_expression_pattern[x], self.n_genes))
 
         return np.sum(equilibrium_steady_state)
+
+    def calculate_fitness(self):
+        D = self.developmentally_stable()
+        self.fitness = math.exp(-D/self.selection_strength)
+
 
 if __name__ == "__main__":
     import doctest
