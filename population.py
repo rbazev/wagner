@@ -65,7 +65,7 @@ class Population(object):
         return new_population
 
     @staticmethod
-    def generate_founder(n_genes, connectivity, mutation_rate):
+    def generate_founder(n_genes, connectivity):
         """
         Generate a founder consisting of a gene network with random interaction strengths and a mutation rate.
 
@@ -81,10 +81,9 @@ class Population(object):
         """
         #founder = genotype.Genotype.generate_random(n_genes, connectivity)
         founder = Genotype.generate_random(n_genes, connectivity)
-        founder.set_mutation_rate(mutation_rate)
         return founder
     
-    def get_fitness(self):
+    def get_population_fitness(self):
         '''
         Create a vector of the fitness of each genotype in the population and make it an attribute of the population
         '''
@@ -102,19 +101,6 @@ class Population(object):
 #                newmatrix[x] = genotype2.gene_network[x]
 #        return Genotype(newmatrix) 
 
-    @staticmethod
-    def recombine (genotype1, genotype2):
-        '''
-        Randomly recombines gene network rows of two parent genotypes
-        '''
-        offspring = copy.deepcopy(genotype1)
-        for x in range (0, genotype1.n_genes):        
-            if random.random() >= .5:  
-                offspring.gene_network[x] = genotype2.gene_network[x]
-            else:
-                continue
-        return offspring 
-    
                         
     def choose_genotype(self): 
         '''
@@ -150,7 +136,7 @@ class Population(object):
         parents1 = Population.choose_genotype(self)
         parents2 = Population.choose_genotype(self)
         for i in range(len(parents1)):
-            recombined = Population.recombine(parents1[i], parents2[i])
+            recombined = Genotype.recombine(parents1[i], parents2[i])
             recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
             new_pop.organisms.append(recombined)
         return new_pop
