@@ -321,7 +321,7 @@ class Genotype(object):
         return offspring 
         
     def calculate_fitness(self):
-        D = self.developmentally_stable()
+        D = self.calculate_expression_variance()
         self.fitness = math.exp(-D/self.selection_strength)
 
     def generate_random_initial_expression_state(self):
@@ -372,7 +372,7 @@ class Genotype(object):
         difference_from_specified_expression = (np.subtract(specified_expression_pattern, gene_expression_state)**2)/(4*n_genes)
         return difference_from_specified_expression
 
-    def developmentally_stable(self):
+    def calculate_expression_variance(self):
         '''
         Calculates D for the equilibrium expression state of the gene network. If the final sum is less than 10-3/tau, the gene network is stable.
         '''
@@ -383,7 +383,7 @@ class Genotype(object):
         return np.sum(equilibrium_steady_state)
 
     def calculate_fitness(self):
-        D = self.developmentally_stable()
+        D = self.calculate_expression_variance()
         self.fitness = math.exp(-D/self.selection_strength)
 
 
