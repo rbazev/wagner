@@ -361,7 +361,7 @@ class Genotype(object):
         '''
         Calculates the average expression pattern from the last tau expression states
         '''
-        interval_expression_pattern = self.gene_expression_pattern[self.n_steps-self.tau:self.n_steps]
+        interval_expression_pattern = self.gene_expression_pattern[(self.n_steps-self.tau):self.n_steps]
         return np.mean(interval_expression_pattern, axis=0)
 
     @staticmethod
@@ -377,7 +377,7 @@ class Genotype(object):
         Calculates D for the equilibrium expression state of the gene network. If the final sum is less than 10-3/tau, the gene network is stable.
         '''
         equilibrium_steady_state = []
-        for x in range ((len(self.gene_expression_pattern) - self.tau),len(self.gene_expression_pattern)):
+        for x in range ((self.n_steps - self.tau),self.n_steps):
             equilibrium_steady_state.append(Genotype.calculate_difference_from_specified_expression(self.average_expression_pattern, self.gene_expression_pattern[x], self.n_genes))
 
         return np.sum(equilibrium_steady_state)
