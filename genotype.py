@@ -336,6 +336,8 @@ class Genotype(object):
         Calculates the expression level of a gene by filtering the total regulatory input for the gene using the sigmoidal function
         f(x) = 2/(1+e^-ax) - 1. See Supplementary Figure 1.
         '''
+        if current_expression_state_index < -7:
+            current_expression_state_index = -7
         return (2/(1+math.exp(-activation_constant*current_expression_state_index)) - 1)
 
     def develop(self):
