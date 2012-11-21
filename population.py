@@ -78,7 +78,7 @@ class Population(object):
         [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ]])
         """
         founder = genotype.Genotype.generate_random(n_genes, connectivity)
-        founder.generate_random_initial_expression_state()
+        genotype.Genotype.generate_random_initial_expression_state(founder)
         return founder
     
     def get_population_fitness(self):
@@ -90,18 +90,34 @@ class Population(object):
             self.organisms[i].develop()
             self.organisms[i].calculate_fitness()
             self.all_fitness.append(self.organisms[i].fitness) 
-            
-#    @staticmethod
-#    def recombine (genotype1, genotype2):
-#        newmatrix = np.zeros((genotype1.n_genes, genotype1.n_genes)) 
-#        for x in range (0, genotype1.n_genes):        
-#            if random.random() >= .5:  
-#                newmatrix[x] = genotype1.gene_network[x]
-#            else:
-#                newmatrix[x] = genotype2.gene_network[x]
-#        return Genotype(newmatrix) 
 
-                        
+
+    def set_percent_sexual (self, percent):
+        '''
+        Create a population with both sexual and asexual members
+        '''
+        assert 0 <= percent <=1
+        self.percent_sexual = percent
+        number_sexual = int(self.population_size*percent)
+        for i in range(0, self.population_size):
+            if i < number_sexual:
+                self.organisms[i].sex_locus = "sexual"
+            else:
+                self.organisms[i].sex_locus = "asexual"
+        
+    def get_percent_sexual (self):
+        ''' 
+        Calculate the percentage of organisms that are sexual
+        '''
+        num_sexual = 0
+        for i in range(0, self.population_size):
+            if self.organisms[i].sex_locus == "sexual":
+                num_sexual = num_sexual + 1
+            else:
+                next
+        self.percent_sexual = num_sexual/self.population_size      
+        
+                            
     def choose_genotype(self): 
         '''
         Generates all offspring for the next generation, randomly, weighted by fitness
@@ -111,10 +127,48 @@ class Population(object):
         mult_rand_array = np.multiply(rand_array, cum_fitness[self.population_size-1])
         indices = np.searchsorted(cum_fitness, mult_rand_array)
         chosen_genotypes = []
-        for i in range(self.population_size):
+        for i in range(0,self.population_size):
             chosen_genotypes.append(self.organisms[indices[i]])
         return chosen_genotypes
         
+
+    def reproduce_pop (self):
+        '''
+        Determines which reproduction method is appropriate.
+        '''
+        if self.percent_sexual == 1:
+            new_pop = Population.sexually_reproduce_pop(self)
+        elif self.percent_sexual == 0:
+            new_pop = Population.asexually_reproduce_pop(self)
+        else:
+            new_pop = Population.reproduce_mixed_pop(self)
+        return new_pop
+            
+
+    def reproduce_mixed_pop(self): 
+        '''
+        If the population contains both sexual and asexual organisms, new organisms are chosen and sex locus values compared.
+        Sexual reproduction is dominant.
+        '''
+        new_pop = Population()
+        chosen_genotypes1 = Population.choose_genotype(self)
+        chosen_genotypes2 = Population.choose_genotype(self)
+        for i in range(0,len(chosen_genotypes1)):
+            if len(new_pop.organisms) < self.population_size:
+                if (chosen_genotypes1[i].sex_locus == "asexual" and chosen_genotypes2[i].sex_locus == "asexual"):
+                    chosen_genotypes1[i].mutate_random(rnd.poisson(chosen_genotypes1[i].mutation_rate))
+                    new_pop.organisms.append(chosen_genotypes1[i])
+                elif chosen_genotypes1[i].sex_locus == "sexual" and chosen_genotypes2[i].sex_locus == "sexual":
+                    recombined = (genotype.Genotype.recombine(chosen_genotypes1[i], chosen_genotypes2[i]))
+                    recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
+                    new_pop.organisms.append(recombined)
+                    
+                else:
+                    recombined = (genotype.Genotype.recombine(chosen_genotypes1[i], chosen_genotypes2[i]))
+                    recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
+                    new_pop.organisms.append(recombined)       
+        return new_pop                    
+     
 
     def asexually_reproduce_pop (self):
         '''
@@ -136,7 +190,7 @@ class Population(object):
         parents1 = Population.choose_genotype(self)
         parents2 = Population.choose_genotype(self)
         for i in range(len(parents1)):
-            recombined = genotype.Genotype.recombine(parents1[i], parents2[i])
+            recombined = Genotype.recombine(parents1[i], parents2[i])
             recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
             new_pop.organisms.append(recombined)
         return new_pop
