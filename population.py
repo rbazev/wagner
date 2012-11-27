@@ -14,7 +14,6 @@ import random
 import networkx as nx
 import math
 import genotype
-import development
 
 
 __author__ = 'Ricardo Azevedo, Christina Burch, Kayla Peck, Amanda Whitlock'
@@ -27,24 +26,11 @@ class Population(object):
     """
     def __init__(self): 
         self.organisms = []
-
-    @property
-    def population_size(self):
-        """
-        Number of individual genotypes in the population.
-
-        >>> founder = population.Population.generate_founder(5,.2,1)
-        >>> g0 = population.Population.found_clonal_population(founder,10)
-        >>> g0.population_size
-        10
-        """
-        return len(self.organisms)      
-
-    def set_population_size(self, population_size):
-        self.population_size = population_size
+        self.population_size = 10
+        self.dominant_sex_locus = "asexual"
         
     @staticmethod
-    def found_clonal_population(founder,population_size):
+    def found_clonal_population(founder):
         """
         Make a population by copying a founder genotype into a list population_size times.
 
@@ -60,7 +46,7 @@ class Population(object):
         [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ]])
         """
         new_population = Population()
-        while new_population.population_size < population_size:
+        while len(new_population.organisms) < new_population.population_size: 
             new_population.organisms.append(copy.deepcopy(founder))
         return new_population
 
@@ -136,12 +122,14 @@ class Population(object):
         '''
         Determines which reproduction method is appropriate.
         '''
+        Population.get_percent_sexual(self)
         if self.percent_sexual == 1:
             new_pop = Population.sexually_reproduce_pop(self)
         elif self.percent_sexual == 0:
             new_pop = Population.asexually_reproduce_pop(self)
         else:
             new_pop = Population.reproduce_mixed_pop(self)
+        Population.get_population_fitness(new_pop)
         return new_pop
             
 
@@ -161,12 +149,15 @@ class Population(object):
                 elif chosen_genotypes1[i].sex_locus == "sexual" and chosen_genotypes2[i].sex_locus == "sexual":
                     recombined = (genotype.Genotype.recombine(chosen_genotypes1[i], chosen_genotypes2[i]))
                     recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
-                    new_pop.organisms.append(recombined)
-                    
+                    new_pop.organisms.append(recombined)                   
                 else:
-                    recombined = (genotype.Genotype.recombine(chosen_genotypes1[i], chosen_genotypes2[i]))
-                    recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
-                    new_pop.organisms.append(recombined)       
+                    if self.dominant_sex_locus == "sexual":
+                        recombined = (genotype.Genotype.recombine(chosen_genotypes1[i], chosen_genotypes2[i]))
+                    	recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
+                    	new_pop.organisms.append(recombined)
+                    elif self.dominant_sex_locus == "asexual":
+                    	chosen_genotypes1[i].mutate_random(rnd.poisson(chosen_genotypes1[i].mutation_rate))
+                        new_pop.organisms.append(chosen_genotypes1[i])                    	       
         return new_pop                    
      
 
