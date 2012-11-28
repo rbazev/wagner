@@ -387,6 +387,20 @@ class Genotype(object):
         self.fitness = math.exp(-D/self.selection_strength)
 
 
+    def calculate_robustness(self, replicates):
+        """
+        Calculates the robustness of a single genotype by calculating the average fitness of (# of replicates) 1-mutant neighbors
+        """
+        fitness_array = []
+        for i in range(0,replicates):
+            temporary_network = copy.deepcopy(self)
+            temporary_network.mutate_random(1)
+            temporary_network.develop()
+            temporary_network.calculate_fitness()
+            fitness_array.append(temporary_network.fitness)
+        self.robustness = np.mean(fitness_array)
+
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
