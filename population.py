@@ -116,24 +116,22 @@ class Population(object):
         for i in range(0,self.population_size):
             chosen_genotypes.append(self.organisms[indices[i]])
         return chosen_genotypes
-        
 
-    def reproduce_pop (self):
+    def sexually_reproduce_pop (self):
         '''
-        Determines which reproduction method is appropriate.
+        Sexually reproduces the population, choosing 2*population parents, recombining their gene networks, and mutating the product
         '''
-        Population.get_percent_sexual(self)
-        if self.percent_sexual == 1:
-            new_pop = Population.sexually_reproduce_pop(self)
-        elif self.percent_sexual == 0:
-            new_pop = Population.asexually_reproduce_pop(self)
-        else:
-            new_pop = Population.reproduce_mixed_pop(self)
-        Population.get_population_fitness(new_pop)
+        new_pop = Population()
+        parents1 = Population.choose_genotype(self)
+        parents2 = Population.choose_genotype(self)
+        for i in range(len(parents1)):
+            recombined = Genotype.recombine(parents1[i], parents2[i])
+            recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
+            new_pop.organisms.append(recombined)
         return new_pop
-            
 
-    def reproduce_mixed_pop(self): 
+
+    def reproduce_mixed_pop(self):
         '''
         If the population contains both sexual and asexual organisms, new organisms are chosen and sex locus values compared.
         Sexual reproduction is dominant.
@@ -149,17 +147,31 @@ class Population(object):
                 elif chosen_genotypes1[i].sex_locus == "sexual" and chosen_genotypes2[i].sex_locus == "sexual":
                     recombined = (genotype.Genotype.recombine(chosen_genotypes1[i], chosen_genotypes2[i]))
                     recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
-                    new_pop.organisms.append(recombined)                   
+                    new_pop.organisms.append(recombined)
                 else:
                     if self.dominant_sex_locus == "sexual":
                         recombined = (genotype.Genotype.recombine(chosen_genotypes1[i], chosen_genotypes2[i]))
                         recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
-                    new_pop.organisms.append(recombined)
+                        new_pop.organisms.append(recombined)
                     elif self.dominant_sex_locus == "asexual":
                         chosen_genotypes1[i].mutate_random(rnd.poisson(chosen_genotypes1[i].mutation_rate))
-                        new_pop.organisms.append(chosen_genotypes1[i])                    	       
-        return new_pop                    
-     
+                        new_pop.organisms.append(chosen_genotypes1[i])
+        return new_pop
+
+
+    def reproduce_pop (self):
+        '''
+        Determines which reproduction method is appropriate.
+        '''
+        Population.get_percent_sexual(self)
+        if self.percent_sexual == 1:
+            new_pop = Population.sexually_reproduce_pop(self)
+        elif self.percent_sexual == 0:
+            new_pop = Population.asexually_reproduce_pop(self)
+        else:
+            new_pop = Population.reproduce_mixed_pop(self)
+        Population.get_population_fitness(new_pop)
+        return new_pop
 
     def asexually_reproduce_pop (self):
         '''
@@ -170,23 +182,15 @@ class Population(object):
         for i in range(len(new_pop.organisms)):
             new_pop.organisms[i].mutate_random(rnd.poisson(new_pop.organisms[i].mutation_rate))
         return new_pop
-            
-       
-       
-    def sexually_reproduce_pop (self): 
-        '''
-        Sexually reproduces the population, choosing 2*population parents, recombining their gene networks, and mutating the product
-        '''
-        new_pop = Population()
-        parents1 = Population.choose_genotype(self)
-        parents2 = Population.choose_genotype(self)
-        for i in range(len(parents1)):
-            recombined = Genotype.recombine(parents1[i], parents2[i])
-            recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
-            new_pop.organisms.append(recombined)
-        return new_pop
-            
-        
 
-    
+
+    def calculate_population_robustness(self, replicates):
+        """
+        Calculates mean robustness for a population of individuals
+        """
+        population_robustness_values = []
+        for i in range(0,self.population_size):
+            self.organisms[i].calculate_robustness(replicates)
+            population_robustness_values.append(self.organisms[i].robustness)
+        self.population_robustness = np.mean(population_robustness_values)
 
