@@ -194,3 +194,12 @@ class Population(object):
             population_robustness_values.append(self.organisms[i].robustness)
         self.population_robustness = np.mean(population_robustness_values)
 
+
+    def calculate_population_epistasis(self, number_of_mutations):
+        """
+        Generates data needed to calculate epistasis for population in R
+        """
+        self.population_epistasis_values = []
+        for i in range(0,self.population_size):
+            self.organisms[i].calculate_epistasis(number_of_mutations)
+            self.population_epistasis_values.append(self.organisms[i].multiple_mutation_robustness)
