@@ -400,6 +400,20 @@ class Genotype(object):
             fitness_array.append(temporary_network.fitness)
         self.robustness = np.mean(fitness_array)
 
+    def calculate_epistasis(self, number_of_mutations):
+        """
+        Generates data needed to calculate epistasis in R: average fitness of an individual over (number_of_mutations) mutations
+        """
+        temporary_network = copy.deepcopy(self)
+        fitness_array = []
+        for i in range(0,number_of_mutations):
+            temporary_network.mutate_random(1)
+            temporary_network.develop()
+            temporary_network.calculate_fitness()
+            fitness_array.append(temporary_network.fitness)
+        self.multiple_mutation_robustness = np.mean(fitness_array)
+
+
 
 if __name__ == "__main__":
     import doctest
