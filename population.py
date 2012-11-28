@@ -153,10 +153,10 @@ class Population(object):
                 else:
                     if self.dominant_sex_locus == "sexual":
                         recombined = (genotype.Genotype.recombine(chosen_genotypes1[i], chosen_genotypes2[i]))
-                    	recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
-                    	new_pop.organisms.append(recombined)
+                        recombined.mutate_random(rnd.poisson(recombined.mutation_rate))
+                    new_pop.organisms.append(recombined)
                     elif self.dominant_sex_locus == "asexual":
-                    	chosen_genotypes1[i].mutate_random(rnd.poisson(chosen_genotypes1[i].mutation_rate))
+                        chosen_genotypes1[i].mutate_random(rnd.poisson(chosen_genotypes1[i].mutation_rate))
                         new_pop.organisms.append(chosen_genotypes1[i])                    	       
         return new_pop                    
      
