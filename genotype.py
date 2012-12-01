@@ -5,7 +5,6 @@ genotype.py: implementation of the gene network model described in Siegal & Berg
 Contains the Genotype class.
 
 """
-
 import copy
 import numpy as np
 import numpy.random as rnd
@@ -59,6 +58,7 @@ class Genotype(object):
         self.tau = 10
         self.selection_strength = 100
         self.mutation_rate = 1.0
+        self.last_repro_mode = ()
 
     @property
     def n_genes(self):
